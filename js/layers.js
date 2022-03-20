@@ -13,8 +13,16 @@ addLayer("c", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
-    gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+
+
+    softcap: new Decimal("1e7"),
+
+
+    gainMult() {
+        let mult = new Decimal(1)
+        if (hasUpgrade('m', 11)) mult = mult.add(1)
+        if (hasUpgrade('c', 14)) mult = mult.times(upgradeEffect('c', 14))
+        
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -25,6 +33,7 @@ addLayer("c", {
         {key: "c", description: "C: Reset for Cryptic Clues", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
+    branches: [["m", 1]],
     upgrades:{
         11:{
             title: "Start playing",
@@ -35,11 +44,13 @@ addLayer("c", {
             title: "Wonder what my name means",
             description: "Triple your point gain.",
             cost: new Decimal(3),
+            unlocked() {if (hasUpgrade('c', 11)) return true},
         },
         13:{
             title: "Ask nicely what my name means",
             description: "Boost questions based on clues.",
             cost: new Decimal(10),
+            unlocked() {if (hasUpgrade('c', 12)) return true},
             effect() {
                 return player[this.layer].points.add(1).pow(0.5)
             },
@@ -49,6 +60,7 @@ addLayer("c", {
             title: "Ask harshly what my name means",
             description: "Boost clues based on questions.",
             cost: new Decimal(25),
+            unlocked() {if (hasUpgrade('c', 13)) return true},
             effect() {
                 return player.points.add(1).pow(0.15)
             },
@@ -58,18 +70,29 @@ addLayer("c", {
             title: "...back to the previous layer",
             description: "Boost questions based on clues but more.",
             cost: new Decimal(50),
+            unlocked() {if (hasUpgrade('m', 11)) if(hasUpgrade('c', 14)) return true},
             effect() {
                 return player[this.layer].points.add(1).pow(0.75)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
+        16:{
+            title: "But wouldn't that imply that...?",
+            description: "Boost questions based on questions.",
+            cost: new Decimal(250),
+            unlocked() {if (hasUpgrade('c', 15)) return true},
+            effect() {
+                return player.points.add(1).pow(0.25)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        21:{
+            title: "Oh, a different line",
+            description: "break the first softcap but nerf point gain",
+            cost: new Decimal(1e15),
+
+        }
         
-    },
-    gainMult() {
-         let mult = new Decimal(1)
-         if (hasUpgrade('m', 11)) mult = mult.add(1)
-         if (hasUpgrade('c', 14)) mult = mult.times(upgradeEffect('c', 14))
-         return mult
     },
 })
 addLayer("m", {
@@ -88,8 +111,13 @@ addLayer("m", {
     requires: new Decimal(1000),              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
-    type: "normal",                         // Determines the formula used for calculating prestige currency.
-    exponent: 0.5,                          // "normal" prestige gain is (currency^exponent).
+    type: "static",                         // Determines the formula used for calculating prestige currency.
+    exponent: 2,                          // "normal" prestige gain is (currency^exponent).
+
+    effect() {
+        return player.points.add(1).pow(0.25)
+    },
+    effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         return new Decimal(1)               // Factor in any bonuses multiplying gain here.
@@ -98,7 +126,11 @@ addLayer("m", {
         return new Decimal(1)
     },
 
-    layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { 
+        if(hasUpgrade('c', 14)) return true 
+        else if (new Decimal>0) return true
+        else if (hasUpgrade('m', 11)) return true
+    },          // Returns a bool for if this layer's node should be visible in the tree.
 
     upgrades: {
         11:{
