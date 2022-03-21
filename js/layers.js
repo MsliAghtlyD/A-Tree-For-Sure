@@ -14,17 +14,23 @@ addLayer("c", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
 
-
     softcap: new Decimal("1e7"),
-
+    
 
     gainMult() {
         let mult = new Decimal(1)
         if (hasUpgrade('m', 11)) mult = mult.add(1)
         if (hasUpgrade('c', 14)) mult = mult.times(upgradeEffect('c', 14))
+        let Meff = player.m.best.add(1).pow(0.75);
+        let qEff = player.m.total.pow(0.6725).plus(1);
+        Meff = Meff.times(qEff);
+        mult=mult.times(Meff);
+        if (hasUpgrade('c', 23)) mult = mult.pow(0.5)
+    
         
         return mult
     },
+    
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
@@ -52,7 +58,9 @@ addLayer("c", {
             cost: new Decimal(10),
             unlocked() {if (hasUpgrade('c', 12)) return true},
             effect() {
-                return player[this.layer].points.add(1).pow(0.5)
+                let eff= player[this.layer].points.add(1).pow(0.5)
+                if(hasUpgrade('c',15)) eff=eff.times(upgradeEffect('c', 15))
+                return eff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -68,15 +76,15 @@ addLayer("c", {
         },
         15:{
             title: "...back to the previous layer",
-            description: "Boost questions based on clues but more.",
+            description: "Boost questions based on clues by boosting third upgrade.",
             cost: new Decimal(50),
             unlocked() {if (hasUpgrade('m', 11)) if(hasUpgrade('c', 14)) return true},
             effect() {
-                return player[this.layer].points.add(1).pow(0.75)
+                return player[this.layer].points.add(1).pow(0.35)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
-        16:{
+        21:{
             title: "But wouldn't that imply that...?",
             description: "Boost questions based on questions.",
             cost: new Decimal(250),
@@ -86,15 +94,29 @@ addLayer("c", {
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
-        21:{
-            title: "Oh, a different line",
-            description: "break the first softcap but nerf point gain",
+        22:{
+            title: "Cookie time",
+            description: "Nerf question gain for the Greater Good.",
+            cost: new Decimal(1e7),
+            unlocked() {if (hasUpgrade('c', 21)) return true},
+        },
+        23:{
+            title: "It is called up-grade though",
+            description: "Nerf clue gain for the Greater Good.",
             cost: new Decimal(1e15),
-
-        }
-        
+            unlocked() {if (hasUpgrade('c', 22)) return true},
+        },
+        24:{
+            title: "That's the",
+            description: "Nerf clue gain for the Greater Good.",
+            cost: new Decimal(1e15),
+            unlocked() {if (hasUpgrade('c', 23)) return true},
+        },
     },
 })
+
+
+
 addLayer("m", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: false,                     // You can add more variables here to add them to your layer.
@@ -114,13 +136,26 @@ addLayer("m", {
     type: "static",                         // Determines the formula used for calculating prestige currency.
     exponent: 2,                          // "normal" prestige gain is (currency^exponent).
 
+   
     effect() {
-        return player.points.add(1).pow(0.25)
+        eff = player[this.layer].best.add(1).pow(0.75);
+
+        let qEff = player.m.total.pow(0.6725).plus(1);
+
+        eff = eff.pow(qEff);
+        return eff
+        },
+    effectDescription() {
+        eff = this.effect();
+        return "your mysteries boost your clue gain by "+format(eff)
+
     },
-    effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
-        return new Decimal(1)               // Factor in any bonuses multiplying gain here.
+        let price= new Decimal(1)               // Factor in any bonuses multiplying gain here.
+        if (player.m.points.gte(4)) price = price.times(1e10)
+        return price
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
         return new Decimal(1)
@@ -138,6 +173,67 @@ addLayer("m", {
             description: "Square clues gain and new upgrades.",
             cost: new Decimal(1),
         },
+    },
+
+    milestones: {
+        0: {
+            requirementDescription: "4 mysteries",
+            effectDescription: "No more. For now",
+            done() { return player.m.points.gte(4) }
+        }
+    }
+
+})
+
+
+
+
+
+
+
+
+addLayer("a", {
+    startData() { return {                  // startData is a function that returns default data for a layer. 
+        unlocked: true,                     // You can add more variables here to add them to your layer.
+    }},
+
+    color: "#FFFF00",                       // The color for this layer, which affects many elements.
+    row: "side",                                 // The row this layer is on (0 is the first row).
+
+    layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
+
+    achievements: {
+        11: {
+            name: "First win!",
+            done() {
+				return (hasUpgrade('c', 12))
+			},
+            goalTooltip() {return"Get the second upgrade"},
+
+            doneTooltip() {return"Reward: A fleeting feeling of accomplishment"},
+
+        },
+        12:{
+            name: "First win!",
+            done() {
+				return (player.m.points.gte(4))
+			},
+            goalTooltip() {return"Get the second layer"},
+
+            doneTooltip() {return"Reward: The second layer"},
+        },
+        13: {
+            name: "That's... not helping",
+            done() {
+				return (hasUpgrade('c', 22))
+			},
+            goalTooltip() {return"Get the the first mystery milestone"},
+
+            doneTooltip() {return"Reward: A fleeting feeling of despair"},
+
+        },
+
+
     },
 
 })

@@ -45,8 +45,8 @@ function getPointGen() {
 	if (hasUpgrade('c', 11)) gain = new Decimal(1)
 	if (hasUpgrade('c', 12)) gain = gain.times(3)
 	if (hasUpgrade('c', 13)) gain = gain.times(upgradeEffect('c', 13))
-	if (hasUpgrade('c', 15)) gain = gain.times(upgradeEffect('c', 15))
-	if (hasUpgrade('c', 16)) gain = gain.times(upgradeEffect('c', 16))
+	if (hasUpgrade('c', 21)) gain = gain.times(upgradeEffect('c', 21))
+	if (hasUpgrade('c', 22)) gain = gain.pow(0.1)
 	return gain
 }
 
@@ -56,11 +56,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	function(){return"Current endgame: 1e12 clues"},
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return (hasUpgrade('c', 22))
 }
 
 
