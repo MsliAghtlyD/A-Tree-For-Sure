@@ -13,16 +13,26 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "0.01",
+	name: "A start",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 	<h3>v0.0</h3><br>
 		- Added things.<br>
-		- Added stuff.`
+		- Added stuff.<br><br>
+	<h3>v0.01</h3><br>
+		- A day has passed.<br>
+		- Added first challenge.<br>
+		- Cookie breaks loose<br>
+		- Added Achievements<br>
+		- Added first Changelog entry<br>
+		- Corrected a few bug<br>
+		- Creating a lot more`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+	
+
+let winText = `Congratulations! You have reached the end and beaten this game, now wait for a game breaking upgrade that requires you to reset everything`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -47,6 +57,8 @@ function getPointGen() {
 	if (hasUpgrade('c', 13)) gain = gain.times(upgradeEffect('c', 13))
 	if (hasUpgrade('c', 21)) gain = gain.times(upgradeEffect('c', 21))
 	if (hasUpgrade('c', 22)) gain = gain.pow(0.1)
+	if (hasUpgrade('m', 12)) gain = gain.times(upgradeEffect('m', 12))
+	if (inChallenge('m',11)) gain = gain.times(0.8)
 	return gain
 }
 
@@ -56,12 +68,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: 1e12 clues"},
+	function(){return"Current endgame: third mystery upgrade"},
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (hasUpgrade('c', 22))
+	return (hasUpgrade('m', 13))
 }
 
 

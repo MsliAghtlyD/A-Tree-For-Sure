@@ -20,6 +20,7 @@ addLayer("c", {
     gainMult() {
         let mult = new Decimal(1)
         if (hasUpgrade('m', 11)) mult = mult.add(1)
+        if (hasChallenge('m', 11)) mult = mult.add(9)
         if (hasUpgrade('c', 14)) mult = mult.times(upgradeEffect('c', 14))
         let Meff = player.m.best.add(1).pow(0.75);
         let qEff = player.m.total.pow(0.6725).plus(1);
@@ -98,19 +99,28 @@ addLayer("c", {
             title: "Cookie time",
             description: "Nerf question gain for the Greater Good.",
             cost: new Decimal(1e7),
-            unlocked() {if (hasUpgrade('c', 21)) return true},
+            unlocked() {
+                if (hasUpgrade('c', 21)) return true
+                else if (player.m.points>=4) return true
+                else if(hasAchievement("a", 13)) return true
+                
+            },
+            onPurchase() { 
+                player.c.points = new Decimal(1)
+                player.points = new Decimal(1)
+            },
         },
         23:{
-            title: "It is called up-grade though",
-            description: "Nerf clue gain for the Greater Good.",
-            cost: new Decimal(1e15),
-            unlocked() {if (hasUpgrade('c', 22)) return true},
-        },
-        24:{
             title: "That's the",
             description: "Nerf clue gain for the Greater Good.",
             cost: new Decimal(1e15),
             unlocked() {if (hasUpgrade('c', 23)) return true},
+        },
+        32:{
+            title: "It is called up-grade though",
+            description: "Nerf clue gain for the Greater Good.",
+            cost: new Decimal(1e15),
+            unlocked() {if (hasUpgrade('c', 22)) return true},
         },
     },
 })
@@ -136,13 +146,12 @@ addLayer("m", {
     type: "static",                         // Determines the formula used for calculating prestige currency.
     exponent: 2,                          // "normal" prestige gain is (currency^exponent).
 
+    hotkeys: [
+        {key: "m", description: "M: Reset for Mystery", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
    
     effect() {
         eff = player[this.layer].best.add(1).pow(0.75);
-
-        let qEff = player.m.total.pow(0.6725).plus(1);
-
-        eff = eff.pow(qEff);
         return eff
         },
     effectDescription() {
@@ -163,7 +172,7 @@ addLayer("m", {
 
     layerShown() { 
         if(hasUpgrade('c', 14)) return true 
-        else if (new Decimal>0) return true
+        else  if (player.m.points.gte(0)) return true
         else if (hasUpgrade('m', 11)) return true
     },          // Returns a bool for if this layer's node should be visible in the tree.
 
@@ -172,6 +181,36 @@ addLayer("m", {
             title: "If you takes those clues you get...",
             description: "Square clues gain and new upgrades.",
             cost: new Decimal(1),
+        },
+        12:{
+            title: "The missing link",
+            description: "Boost questions based on questions.",
+            cost: new Decimal(4),
+            unlocked() {if (hasUpgrade('c', 22)) return true
+                        else if (hasUpgrade('m', 12)) return true
+                    },
+            effect() {
+                let eff= player.points.add(1).pow(0.05)
+                return eff
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        13:{
+            title: "I wanna make more clue upgrades",
+            description: "Square clues gain and new upgrades.",
+            cost: new Decimal(4),
+            unlocked() {if (hasChallenge('m', 11)) return true},
+        },
+    },
+
+    challenges: {
+        11: {
+            name: "A waste of time",
+            challengeDescription: `get questions^0.8 <br> Or just use it to get out of 'Cookie Time'`,
+            goalDescription:"get 1e11 questions.",
+            rewardDescription:"clue base gets boosted",
+            canComplete: function() {return player.points.gte(1e11)},
+            unlocked() {if(hasMilestone('m', 0)) return true}
         },
     },
 
@@ -216,7 +255,7 @@ addLayer("a", {
         12:{
             name: "First win!",
             done() {
-				return (player.m.points.gte(4))
+				return (player.m.points.gte(1))
 			},
             goalTooltip() {return"Get the second layer"},
 
@@ -227,7 +266,7 @@ addLayer("a", {
             done() {
 				return (hasUpgrade('c', 22))
 			},
-            goalTooltip() {return"Get the the first mystery milestone"},
+            goalTooltip() {return"Get the the seventh clue upgrade"},
 
             doneTooltip() {return"Reward: A fleeting feeling of despair"},
 
