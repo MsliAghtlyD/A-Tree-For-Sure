@@ -21,12 +21,13 @@ addLayer("c", {
         let mult = new Decimal(1)
         if (hasUpgrade('m', 11)) mult = mult.add(1)
         if (hasChallenge('m', 11)) mult = mult.add(9)
+        if (hasChallenge('m', 12)) mult = mult.add(90)
         if (hasUpgrade('c', 14)) mult = mult.times(upgradeEffect('c', 14))
         let Meff = player.m.best.add(1).pow(0.75);
         let qEff = player.m.total.pow(0.6725).plus(1);
         Meff = Meff.times(qEff);
         mult=mult.times(Meff);
-        if (hasUpgrade('c', 23)) mult = mult.pow(0.5)
+        if (hasUpgrade('c', 24)) mult = mult.pow(0.5)
     
         
         return mult
@@ -97,11 +98,11 @@ addLayer("c", {
         },
         22:{
             title: "Cookie time",
-            description: "Nerf question gain for the Greater Good.",
+            description: "Nerf question gain for the Greater Good and reset clues and question.",
             cost: new Decimal(1e7),
             unlocked() {
-                
-                if (player.m.best>=4) if (hasUpgrade('c', 21)) return true
+                if(inChallenge('m', 11)) return false
+                else if (player.m.best>=4) if (hasUpgrade('c', 21)) return true
                 else if(hasAchievement("a", 13)) if (hasUpgrade('c', 21)) return true
                 
             },
@@ -111,10 +112,32 @@ addLayer("c", {
             },
         },
         23:{
-            title: "That's the",
-            description: "Nerf clue gain for the Greater Good.",
-            cost: new Decimal(1e15),
-            unlocked() {if (hasUpgrade('c', 23)) return true},
+            title: "Cookie thyme",
+            description: "Nerf question gain for the Greater Good, reset clues and questions.",
+            cost: new Decimal(1e7),
+            unlocked() {
+                if(inChallenge('m', 11)) if (hasUpgrade('c', 21)) return true               
+
+            },
+
+        },
+        24:{
+            title: "That's the...",
+            description: "Unlock another mystery challenge",
+            cost: new Decimal(1e10),
+            unlocked() {if (hasAchievement('a', 14)) return true},
+        },
+        25:{
+            title: "...next layer over there?",
+            description: "Unlock more content",
+            cost: new Decimal(1e9),
+            unlocked() {if (hasChallenge('m', 12)) return true},
+        },
+        31:{
+            title: "No. No it's not.",
+            description: "Unlock another mystery challenge",
+            cost: new Decimal(1e12),
+            unlocked() {if (hasUpgrade('c', 25)) return true},
         },
         32:{
             title: "It is called up-grade though",
@@ -124,6 +147,9 @@ addLayer("c", {
         },
     },
 })
+
+
+
 
 
 
@@ -156,10 +182,14 @@ addLayer("m", {
         },
     effectDescription() {
         eff = this.effect();
-        return "your mysteries boost your clue gain by "+format(eff)
+        return "your max mysteries boost your clue gain by "+format(eff)
 
     },
 
+    canBuyMax() {
+        if (hasMilestone('m', 1)) return true
+
+    },
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         let price= new Decimal(1)               // Factor in any bonuses multiplying gain here.
@@ -179,7 +209,7 @@ addLayer("m", {
     upgrades: {
         11:{
             title: "If you takes those clues you get...",
-            description: "Square clues gain and new upgrades.",
+            description: "greatly boost clues gain and new clue upgrades.",
             cost: new Decimal(1),
         },
         12:{
@@ -207,10 +237,37 @@ addLayer("m", {
         11: {
             name: "A waste of time",
             challengeDescription: `get questions^0.8 <br> Or just use it to get out of 'Cookie Time'`,
+            goalDescription:"get 1e7 questions.",
+            rewardDescription:"clue base gets boosted",
+            canComplete: function() {return player.points.gte(1e7)},
+            unlocked() {if(hasUpgrade('m', 12)) return true}
+        },
+        12: {
+            name: "And somehow worse than the previous one",
+            challengeDescription: ``,
+            goalDescription:"get 100 questions while having 'Cookie time'",
+            rewardDescription:"clue base gets boosted... again",
+            canComplete: function() {if(hasUpgrade('c', 22)) {return player.points.gte(100)}},
+            unlocked() {if(hasUpgrade('c', 24)) return true
+            else if (inChallenge('m',12 ))return true
+            else if (hasChallenge('m', 12)) return true
+            },
+        },
+        13: {
+            name: "That doesn't seem like a new layer",
+            challengeDescription: `get questions^0.5`,
             goalDescription:"get 1e11 questions.",
             rewardDescription:"clue base gets boosted",
             canComplete: function() {return player.points.gte(1e11)},
-            unlocked() {if(hasMilestone('m', 0)) return true}
+            unlocked() {if(hasUpgrade('c', 25)) return true}
+        },
+        14: {
+            name: "A waste of time",
+            challengeDescription: `get questions^0.8 <br> Or just use it to get out of 'Cookie Time'`,
+            goalDescription:"get 1e11 questions.",
+            rewardDescription:"clue base gets boosted",
+            canComplete: function() {return player.points.gte(1e11)},
+            unlocked() {if(hasUpgrade('c', 25)) return true}
         },
     },
 
@@ -219,10 +276,18 @@ addLayer("m", {
             requirementDescription: "4 mysteries",
             effectDescription: "No more. For now",
             done() { return player.m.points.gte(4) }
-        }
+        },
+        1: {
+            requirementDescription: "Get the third mystery upgrade",
+            effectDescription: "You can buy max mysteries",
+            done() { return (hasUpgrade('m', 13)) }
+        },
     }
 
 })
+
+
+
 
 
 
@@ -240,6 +305,20 @@ addLayer("a", {
     row: "side",                                 // The row this layer is on (0 is the first row).
 
     layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
+
+    tooltip() { // Optional, tooltip displays when the layer is locked
+        return ("Achievements")
+    },
+    tabFormat: [
+        ["display-text",
+            function() { return `You found ${player.a.achievements.length} Achievements` },
+            {"font-size": "32px"}],
+        "blank",
+        "blank",
+        "blank",
+        "blank",
+        "achievements",
+    ],
 
     achievements: {
         11: {
@@ -271,7 +350,46 @@ addLayer("a", {
             doneTooltip() {return"Reward: A fleeting feeling of despair"},
 
         },
+        14: {
+            name: "Take a hint",
+            done() {
+				return (player.c.points.gte(1e10))
+			},
+            goalTooltip() {return"Get 1e10 clues"},
 
+            doneTooltip() {return"Reward: Cookie time is no longer required to continue purchasing clue upgrades"},
+
+        },
+        15:{
+            name: "That's... no, not this one",
+            done() {
+				if(inChallenge('m', 12)) return (hasUpgrade('c', 24))
+			},
+            goalTooltip() {return"While in second mystery challenge buy the upgrade that unlocks it"},
+
+            doneTooltip() {return"Reward: Why would you get rewarded for that?"},
+        },
+        16: {
+            name: "This achievement is not yet implemented",
+            done() {
+				return (hasUpgrade('c', 31))
+			},
+            goalTooltip() {return"Get a new update"},
+
+            doneTooltip() {return"Reward: the time you wasted waiting"},
+
+        },
+        17: {
+            name: "Wow so secret",
+            done() {
+				return (hasUpgrade('c', 23))
+			},
+            goalTooltip() {return"This doesn't seem right"},
+
+            doneTooltip() {return"Reward: something, surely, sometime"},
+            unlocked() {if (hasAchievement('a', 17)) return true
+            },
+        },
 
     },
 
