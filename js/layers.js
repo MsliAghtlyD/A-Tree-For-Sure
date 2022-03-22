@@ -28,6 +28,7 @@ addLayer("c", {
         Meff = Meff.times(qEff);
         mult=mult.times(Meff);
         if (hasUpgrade('c', 24)) mult = mult.pow(0.5)
+        if (inChallenge('m',12 )) mult=mult.pow(0.5)
     
         
         return mult
@@ -69,7 +70,7 @@ addLayer("c", {
         14:{
             title: "Ask harshly what my name means",
             description: "Boost clues based on questions.",
-            cost: new Decimal(25),
+            cost: new Decimal(26),
             unlocked() {if (hasUpgrade('c', 13)) return true},
             effect() {
                 return player.points.add(1).pow(0.15)
@@ -92,7 +93,7 @@ addLayer("c", {
             cost: new Decimal(250),
             unlocked() {if (hasUpgrade('c', 15)) return true},
             effect() {
-                return player.points.add(1).pow(0.25)
+                return player.points.add(1).pow(0.26)
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -125,9 +126,17 @@ addLayer("c", {
             title: "That's the...",
             description: "Unlock another mystery challenge",
             cost: new Decimal(1e10),
-            unlocked() {if (hasAchievement('a', 14)) return true},
+            unlocked() {
+                if(inChallenge('m', 12)) return false
+                else if (hasAchievement('a', 14)) return true},
         },
         25:{
+            title: "That's the...",
+            description: "Unlock another mystery challenge",
+            cost: new Decimal(1e8),
+            unlocked() {if (inChallenge('m', 12)) return true},
+        },
+        26:{
             title: "...next layer over there?",
             description: "Unlock more content",
             cost: new Decimal(1e9),
@@ -137,7 +146,7 @@ addLayer("c", {
             title: "No. No it's not.",
             description: "Unlock another mystery challenge",
             cost: new Decimal(1e12),
-            unlocked() {if (hasUpgrade('c', 25)) return true},
+            unlocked() {if (hasUpgrade('c', 26)) return true},
         },
         32:{
             title: "It is called up-grade though",
@@ -243,11 +252,11 @@ addLayer("m", {
             unlocked() {if(hasUpgrade('m', 12)) return true}
         },
         12: {
-            name: "And somehow worse than the previous one",
-            challengeDescription: ``,
+            name: "Yet somehow worse than the previous one",
+            challengeDescription: `get clue^0.5`,
             goalDescription:"get 100 questions while having 'Cookie time'",
             rewardDescription:"clue base gets boosted... again",
-            canComplete: function() {if(hasUpgrade('c', 22)) {return player.points.gte(100)}},
+            canComplete: function() { return player.points.gte(100)&&hasUpgrade('c', 22)},
             unlocked() {if(hasUpgrade('c', 24)) return true
             else if (inChallenge('m',12 ))return true
             else if (hasChallenge('m', 12)) return true
@@ -259,7 +268,7 @@ addLayer("m", {
             goalDescription:"get 1e11 questions.",
             rewardDescription:"clue base gets boosted",
             canComplete: function() {return player.points.gte(1e11)},
-            unlocked() {if(hasUpgrade('c', 25)) return true}
+            unlocked() {if(hasUpgrade('c', 26)) return true}
         },
         14: {
             name: "A waste of time",
@@ -267,7 +276,7 @@ addLayer("m", {
             goalDescription:"get 1e11 questions.",
             rewardDescription:"clue base gets boosted",
             canComplete: function() {return player.points.gte(1e11)},
-            unlocked() {if(hasUpgrade('c', 25)) return true}
+            unlocked() {if(hasUpgrade('c', 26)) return true}
         },
     },
 
@@ -280,7 +289,7 @@ addLayer("m", {
         1: {
             requirementDescription: "Get the third mystery upgrade",
             effectDescription: "You can buy max mysteries",
-            done() { return (hasUpgrade('m', 13)) }
+            done() { return (hasUpgrade('m', 13))&& player.m.points==4 }
         },
     }
 
@@ -362,9 +371,8 @@ addLayer("a", {
         },
         15:{
             name: "That's... no, not this one",
-            done() {
-				if(inChallenge('m', 12)) return (hasUpgrade('c', 24))
-			},
+            done() {return (hasUpgrade('c', 25))},
+            
             goalTooltip() {return"While in second mystery challenge buy the upgrade that unlocks it"},
 
             doneTooltip() {return"Reward: Why would you get rewarded for that?"},
