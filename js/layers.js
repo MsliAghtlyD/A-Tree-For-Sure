@@ -27,16 +27,22 @@ addLayer("c", {
         let qEff = player.m.total.pow(0.6725).plus(1);
         Meff = Meff.times(qEff);
         mult=mult.times(Meff);
-        if (hasUpgrade('c', 24)) mult = mult.pow(0.5)
-        if (inChallenge('m',12 )) mult=mult.pow(0.5)
+        if (inChallenge('m',12 )) mult = mult.pow(0.5)
+        if (inChallenge('m',13 )) mult = mult.pow(0.5)
     
         
         return mult
+    },
+
+    passiveGeneration(){
+        if (hasChallenge('m', 13)) return new Decimal (1)
+
     },
     
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
+
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "c", description: "C: Reset for Cryptic Clues", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
@@ -245,7 +251,7 @@ addLayer("m", {
     challenges: {
         11: {
             name: "A waste of time",
-            challengeDescription: `get questions^0.8 <br> Or just use it to get out of 'Cookie Time'`,
+            challengeDescription: `Get questions^0.8 <br> Or just use it to get out of 'Cookie Time'`,
             goalDescription:"get 1e7 questions.",
             rewardDescription:"clue base gets boosted",
             canComplete: function() {return player.points.gte(1e7)},
@@ -253,7 +259,7 @@ addLayer("m", {
         },
         12: {
             name: "Yet somehow worse than the previous one",
-            challengeDescription: `get clue^0.5`,
+            challengeDescription: `Get clue^0.5`,
             goalDescription:"get 100 questions while having 'Cookie time'",
             rewardDescription:"clue base gets boosted... again",
             canComplete: function() { return player.points.gte(100)&&hasUpgrade('c', 22)},
@@ -264,19 +270,21 @@ addLayer("m", {
         },
         13: {
             name: "That doesn't seem like a new layer",
-            challengeDescription: `get questions^0.5`,
-            goalDescription:"get 1e11 questions.",
-            rewardDescription:"clue base gets boosted",
-            canComplete: function() {return player.points.gte(1e11)},
-            unlocked() {if(hasUpgrade('c', 26)) return true}
+            challengeDescription: `Get questions AND clues^0.5`,
+            goalDescription:"get 100000 questions.",
+            rewardDescription:`what base gets boosted? <br> <br> None, get 100% of clue gain every second though`,
+            canComplete: function() {return player.points.gte(10000)},
+            unlocked() {if(hasUpgrade('c', 26)) return true
+            else if (inChallenge('m', 13))return true
+            else if (hasChallenge('m', 13)) return true}
         },
         14: {
             name: "A waste of time",
-            challengeDescription: `get questions^0.8 <br> Or just use it to get out of 'Cookie Time'`,
+            challengeDescription: `get questions^0.8`,
             goalDescription:"get 1e11 questions.",
             rewardDescription:"clue base gets boosted",
             canComplete: function() {return player.points.gte(1e11)},
-            unlocked() {if(hasUpgrade('c', 26)) return true}
+            unlocked() {if(hasUpgrade('c', 26)) if(hasChallenge('m', 13)) return true}
         },
     },
 
@@ -290,6 +298,11 @@ addLayer("m", {
             requirementDescription: "Get the third mystery upgrade",
             effectDescription: "You can buy max mysteries",
             done() { return (hasUpgrade('m', 13))&& player.m.points==4 }
+        },
+        2: {
+            requirementDescription: "4th challenge completed",
+            effectDescription: "automate clue acquisition",
+            done() { return hasChallenge('m', 14) }
         },
     }
 
@@ -372,7 +385,7 @@ addLayer("a", {
         15:{
             name: "That's... no, not this one",
             done() {return (hasUpgrade('c', 25))},
-            
+
             goalTooltip() {return"While in second mystery challenge buy the upgrade that unlocks it"},
 
             doneTooltip() {return"Reward: Why would you get rewarded for that?"},
