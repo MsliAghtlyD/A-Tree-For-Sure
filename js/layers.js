@@ -16,12 +16,7 @@ addLayer("c", {
 
     softcap: new Decimal("1e7"),
     
-    doReset(resettingLayer) {
-        let keep = [];
-        if (hasChallenge("m", 14) && resettingLayer=="m") keep.push("upgrades")
-        if (hasAchievement("a", 41)) keep.push("upgrades")
-        if (layers[resettingLayer].row > this.row) layerDataReset("p", keep)
-    },
+
 
     gainMult() {
         let mult = new Decimal(1)
@@ -82,7 +77,7 @@ addLayer("c", {
         14:{
             title: "Ask harshly what my name means",
             description: "Boost clues based on questions.",
-            cost: new Decimal(26),
+            cost: new Decimal(25),
             unlocked() {if (hasUpgrade('c', 13)) return true},
             effect() {
                 return player.points.add(1).pow(0.15)
