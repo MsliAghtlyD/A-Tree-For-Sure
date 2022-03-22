@@ -253,7 +253,7 @@ addLayer("a", {
 
         },
         12:{
-            name: "First win!",
+            name: "Content",
             done() {
 				return (player.m.points.gte(1))
 			},
