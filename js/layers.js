@@ -16,6 +16,12 @@ addLayer("c", {
 
     softcap: new Decimal("1e7"),
     
+    doReset(resettingLayer) {
+        let keep = [];
+        if (hasChallenge("m", 14) && resettingLayer=="m") keep.push("upgrades")
+        if (hasAchievement("a", 41)) keep.push("upgrades")
+        if (layers[resettingLayer].row > this.row) layerDataReset("p", keep)
+    },
 
     gainMult() {
         let mult = new Decimal(1)
@@ -148,11 +154,17 @@ addLayer("c", {
             cost: new Decimal(1e9),
             unlocked() {if (hasChallenge('m', 12)) return true},
         },
+        27:{
+            title: "...next layer over there?",
+            description: "Unlock more content",
+            cost: new Decimal(1e9),
+            unlocked() {if (hasChallenge('m', 14)) if(hasUpgrade('c', 22)) return true},
+        },
         31:{
             title: "No. No it's not.",
             description: "Unlock another mystery challenge",
             cost: new Decimal(1e12),
-            unlocked() {if (hasUpgrade('c', 26)) return true},
+            unlocked() {if (hasUpgrade('c', 26)) if(hasChallenge('m', 13)) return true},
         },
         32:{
             title: "It is called up-grade though",
