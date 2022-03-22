@@ -100,9 +100,9 @@ addLayer("c", {
             description: "Nerf question gain for the Greater Good.",
             cost: new Decimal(1e7),
             unlocked() {
-                if (hasUpgrade('c', 21)) return true
-                else if (player.m.points>=4) return true
-                else if(hasAchievement("a", 13)) return true
+                
+                if (player.m.best>=4) if (hasUpgrade('c', 21)) return true
+                else if(hasAchievement("a", 13)) if (hasUpgrade('c', 21)) return true
                 
             },
             onPurchase() { 
@@ -172,7 +172,7 @@ addLayer("m", {
 
     layerShown() { 
         if(hasUpgrade('c', 14)) return true 
-        else  if (player.m.points.gte(0)) return true
+        else  if (player.m.best.gte(1)) return true
         else if (hasUpgrade('m', 11)) return true
     },          // Returns a bool for if this layer's node should be visible in the tree.
 
@@ -199,7 +199,7 @@ addLayer("m", {
             title: "I wanna make more clue upgrades",
             description: "Square clues gain and new upgrades.",
             cost: new Decimal(4),
-            unlocked() {if (hasChallenge('m', 11)) return true},
+            unlocked() {if (hasChallenge('m', 11)) if (hasUpgrade('m', 12)) return true},
         },
     },
 
