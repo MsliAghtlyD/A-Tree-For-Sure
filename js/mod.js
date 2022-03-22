@@ -28,7 +28,17 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added Achievements<br>
 		- Added first Changelog entry<br>
 		- Corrected a few bug<br>
-		- Creating a lot more`
+		- Creating a lot more<br><br>
+	<h3>v0.02</h3><br>
+		- A day has passed<br>
+		- Added two more challenge<br>
+		- Tried to implement keeping clue upgrades<br>
+		- Made milestones to automate clue gain<br>
+		- Clue upgrade cannot be kept, Cookie time is too powerful<br>
+		- Made another changelog entry<br>
+		- Made first secret Achievement<br>
+		- Corrected a few bug<br>
+		- Creating a lot more<br><br>`
 
 	
 
