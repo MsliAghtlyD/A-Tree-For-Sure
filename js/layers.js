@@ -16,7 +16,12 @@ addLayer("c", {
 
     softcap: new Decimal("1e7"),
     
-
+    doReset(resettingLayer) {
+        let keep = [];
+            if (hasMilestone('m', 2) && resettingLayer=="m") acM = "upgrades"
+            else acM = ""
+            if (layers[resettingLayer].row > this.row) layerDataReset("c", [acM])
+        },
 
     gainMult() {
         let mult = new Decimal(1)
@@ -49,7 +54,7 @@ addLayer("c", {
         {key: "c", description: "C: Reset for Cryptic Clues", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
-    branches: [["m", 1]],
+    branches: [["m", 1], ["d", 1]],
     upgrades:{
         11:{
             title: "Start playing",
@@ -149,12 +154,6 @@ addLayer("c", {
             cost: new Decimal(1e9),
             unlocked() {if (hasChallenge('m', 12)) return true},
         },
-        27:{
-            title: "...next layer over there?",
-            description: "Unlock more content",
-            cost: new Decimal(1e9),
-            unlocked() {if (hasChallenge('m', 14)) if(hasUpgrade('c', 22)) return true},
-        },
         31:{
             title: "No. No it's not.",
             description: "Unlock another mystery challenge",
@@ -219,7 +218,10 @@ addLayer("m", {
         return price
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
-        return new Decimal(1)
+        let price =  new Decimal(1)
+        if (hasChallenge('m', 14)) price = price.add(1)
+        if (hasChallenge('m', 14)) price = price.pow(3)
+        return price
     },
 
     layerShown() { 
@@ -278,7 +280,7 @@ addLayer("m", {
         13: {
             name: "That doesn't seem like a new layer",
             challengeDescription: `Get questions AND clues^0.5`,
-            goalDescription:"get 100000 questions.",
+            goalDescription:"get 10 000 questions.",
             rewardDescription:`what base gets boosted? <br> <br> None, get 100% of clue gain every second though`,
             canComplete: function() {return player.points.gte(10000)},
             unlocked() {if(hasUpgrade('c', 26)) return true
@@ -286,12 +288,14 @@ addLayer("m", {
             else if (hasChallenge('m', 13)) return true}
         },
         14: {
-            name: "A waste of time",
+            name: "I need to nerf that",
             challengeDescription: `get questions^0.8`,
-            goalDescription:"get 1e11 questions.",
-            rewardDescription:"clue base gets boosted",
+            goalDescription:"get 1e11 questions while in 'Cookie time'.",
+            rewardDescription:"get a new milestone and boost mystery gain",
             canComplete: function() {return player.points.gte(1e11)},
-            unlocked() {if(hasUpgrade('c', 26)) if(hasChallenge('m', 13)) return true}
+            unlocked() {if(hasUpgrade('c', 31)) return true 
+                else if (inChallenge('m', 14)) return true
+                else if(hasChallenge('m', 14)) return true}
         },
     },
 
@@ -302,7 +306,7 @@ addLayer("m", {
             done() { return player.m.points.gte(4) }
         },
         1: {
-            requirementDescription: "Get the third mystery upgrade",
+            requirementDescription: "Get the third mystery upgrade and 4 mysteries",
             effectDescription: "You can buy max mysteries",
             done() { return (hasUpgrade('m', 13))&& player.m.points==4 }
         },
@@ -314,6 +318,128 @@ addLayer("m", {
     }
 
 })
+
+
+
+
+
+addLayer("d", {
+    startData() { return {                  // startData is a function that returns default data for a layer. 
+        unlocked: true,                     // You can add more variables here to add them to your layer.
+        points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+    }},
+
+    color: "#4BDC13",                       // The color for this layer, which affects many elements.
+    resource: "dismay points",            // The name of this layer's main prestige resource.
+    row: 1,                                 // The row this layer is on (0 is the first row).
+
+    baseResource: "points",                 // The name of the resource your prestige gain is based on.
+    baseAmount() { return player.points },  // A function to return the current amount of baseResource.
+
+    requires: new Decimal(100),              // The amount of the base needed to  gain 1 of the prestige currency.
+                                            // Also the amount required to unlock the layer.
+
+    type: "normal",                         // Determines the formula used for calculating prestige currency.
+    exponent: 0.00000000000000000000000000000001,                          // "normal" prestige gain is (currency^exponent).
+
+    gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
+        return new Decimal(1)               // Factor in any bonuses multiplying gain here.
+    },
+    gainExp() {                             // Returns your exponent to your gain of the prestige resource.
+        return new Decimal(1)
+    },
+
+    layerShown() { 
+        
+        if (hasUpgrade("c", 22)) if(hasChallenge("m", 14)) return true },            // Returns a bool for if this layer's node should be visible in the tree.
+
+    upgrades:{
+        11:{
+            title: "You",
+            cost: new Decimal(1),
+        },
+        12:{
+            title: "Need",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 11)) return true},
+        },
+        13:{
+            title: "Out",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 12)) return true},
+        },
+        14:{
+            title: "Of",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 13)) return true},
+        },
+        21:{
+            title: "Cookie",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 14)) return true},
+        },
+
+        22:{
+            title: "Time?",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 21)) return true},
+        },
+        23:{
+            title: "Just",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 22)) return true},
+        },
+        24:{
+            title: "Prestige",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 23)) return true},
+        },
+
+        31:{
+            title: "Here",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 24)) return true},
+        },
+        32:{
+            title: "Then",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 31)) return true},
+        },
+        33:{
+            title: "(Upgrades",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 32)) return true},
+        },
+        34:{
+            title: "Not",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 33)) return true},
+        },
+        41:{
+            title: "Unlimited",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 34)) return true},
+        },
+        42:{
+            title: "Though...",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 41)) return true},
+        },
+        43:{
+            title: "Sorry!",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 42)) return true},
+        },
+        44:{
+            title: "See?",
+            cost: new Decimal(1),
+            unlocked() {if (hasUpgrade('d', 43)) return true},
+        },
+
+    },
+})
+
+
 
 
 
@@ -398,13 +524,13 @@ addLayer("a", {
             doneTooltip() {return"Reward: Why would you get rewarded for that?"},
         },
         16: {
-            name: "This achievement is not yet implemented",
+            name: "You have been bamboozled",
             done() {
-				return (hasUpgrade('c', 31))
+				return (hasUpgrade('c', 26))
 			},
-            goalTooltip() {return"Get a new update"},
+            goalTooltip() {return"Get a new layer"},
 
-            doneTooltip() {return"Reward: the time you wasted waiting"},
+            doneTooltip() {return"Reward: not a new layer but more of those pesky challenges"},
 
         },
         17: {
@@ -418,6 +544,17 @@ addLayer("a", {
             unlocked() {if (hasAchievement('a', 17)) return true
             },
         },
+        21: {
+            name: "That was a mistake",
+            done() {
+				if(hasChallenge("m", 14)) return (hasUpgrade('c', 22))
+			},
+            goalTooltip() {return"Get stuck in Cookie Time"},
+
+            doneTooltip() {return"Reward: A new layer but only to get out of your clue upgrades"},
+
+        },
+
 
     },
 

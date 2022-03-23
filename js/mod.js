@@ -38,6 +38,14 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Made another changelog entry<br>
 		- Made first secret Achievement<br>
 		- Corrected a few bug<br>
+		- Creating a lot more<br><br>
+	<h3>v0.03</h3><br>
+		- A day has passed<br>
+		- Succesfully implemented keeping clue upgrades<br>
+		- Created Despair to contain Cookie<br>
+		- Added fourth mystery challenge<br>
+		- Added new Changelog entry<br>
+		- Corrected a few bug<br>
 		- Creating a lot more<br><br>`
 
 	
@@ -66,10 +74,11 @@ function getPointGen() {
 	if (hasUpgrade('c', 12)) gain = gain.times(3)
 	if (hasUpgrade('c', 13)) gain = gain.times(upgradeEffect('c', 13))
 	if (hasUpgrade('c', 21)) gain = gain.times(upgradeEffect('c', 21))
-	if (hasUpgrade('c', 22)) gain = gain.pow(0.1)
 	if (hasUpgrade('m', 12)) gain = gain.times(upgradeEffect('m', 12))
+	if (hasUpgrade('c', 22)) gain = gain.pow(0.1)
 	if (inChallenge('m',11)) gain = gain.pow(0.8)
 	if (inChallenge('m',13)) gain = gain.pow(0.5)
+	if(inChallenge('m', 14)) if (hasUpgrade('c', 22)) gain = gain.pow(8)
 	return gain
 }
 
@@ -79,12 +88,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: third mystery upgrade"},
+	function(){return"Current endgame: fourth challenge"},
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (hasChallenge('m', 13))
+	return (hasChallenge('m', 14))
 }
 
 
