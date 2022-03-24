@@ -251,7 +251,7 @@ addLayer("m", {
         },
         13:{
             title: "I wanna make more clue upgrades",
-            description: "Square clues gain and new upgrades.",
+            description: "Make yourself check the achievements.",
             cost: new Decimal(4),
             unlocked() {if (hasChallenge('m', 11)) if (hasUpgrade('m', 12)) return true},
         },
@@ -312,7 +312,7 @@ addLayer("m", {
         },
         2: {
             requirementDescription: "4th challenge completed",
-            effectDescription: "automate clue acquisition",
+            effectDescription: "Keep clue upgrades",
             done() { return hasChallenge('m', 14) }
         },
     }
