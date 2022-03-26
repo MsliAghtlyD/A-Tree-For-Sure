@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.01",
-	name: "A start",
+	num: "0.035",
+	name: "A beginning",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -28,7 +28,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added Achievements<br>
 		- Added first Changelog entry<br>
 		- Corrected a few bug<br>
-		- Creating a lot more<br><br>
+		- Created a lot more<br><br>
 	<h3>v0.02</h3><br>
 		- A day has passed<br>
 		- Added two more challenge<br>
@@ -38,7 +38,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Made another changelog entry<br>
 		- Made first secret Achievement<br>
 		- Corrected a few bug<br>
-		- Creating a lot more<br><br>
+		- Created a lot more<br><br>
 	<h3>v0.03</h3><br>
 		- A day has passed<br>
 		- Succesfully implemented keeping clue upgrades<br>
@@ -46,7 +46,16 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added fourth mystery challenge<br>
 		- Added new Changelog entry<br>
 		- Corrected a few bug<br>
-		- Creating a lot more<br><br>`
+		- Created a lot more<br><br>
+	<h3>v0.035</h3><br>
+		- Four days have passed<br>
+		- Made Theory though still completely empty<br>
+		- Made some corrections on the descriptions all around<br>
+		- Third mystery upgrade finally has an effect<br>
+		- Found out game version was still "0.01"<br>
+		- Made second secret achievement <br>
+		- Corrected a few bugs<br>
+		- Created a lot more<br>`
 
 	
 

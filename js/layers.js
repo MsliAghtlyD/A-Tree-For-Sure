@@ -215,6 +215,7 @@ addLayer("m", {
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         let price= new Decimal(1)               // Factor in any bonuses multiplying gain here.
         if (player.m.points.gte(4)) price = price.times(1e10)
+        if (hasUpgrade('m', 13)) price = price.times(0.01)
         return price
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
@@ -251,7 +252,7 @@ addLayer("m", {
         },
         13:{
             title: "I wanna make more clue upgrades",
-            description: "Make yourself check the achievements.",
+            description: "Make yourself check the achievements and get more mysteries.",
             cost: new Decimal(4),
             unlocked() {if (hasChallenge('m', 11)) if (hasUpgrade('m', 12)) return true},
         },
@@ -440,7 +441,7 @@ addLayer("d", {
             11: {
                 name: "A freebie, if you're patient that is",
                 challengeDescription: `Permanent Cookie Time`,
-                goalDescription:"get 11 questions and leave this challenge",
+                goalDescription:`get 11 questions and leave this challenge<br>IF IT'S NOT YELLOW IT'S NOT OVER`,
                 rewardDescription:"finally get that new layer.",
                 canComplete: function() {return player.points.gte(11)},
                 unlocked() {if(hasUpgrade('d', 11)) return true}
@@ -455,7 +456,7 @@ addLayer("d", {
 
 addLayer("t", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
-        unlocked: true,                     // You can add more variables here to add them to your layer.
+        unlocked: false,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
     }},
 
@@ -478,9 +479,11 @@ addLayer("t", {
     gainExp() {                             // Returns your exponent to your gain of the prestige resource.
         return new Decimal(1)
     },
-    branches: [["m", 1], ["c", 0]],
+    branches: [["c", 0]],
 
-    layerShown() { return true }            // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { 
+        
+        if (hasChallenge('d', 11) )return true }            // Returns a bool for if this layer's node should be visible in the tree.
 })
 
 
@@ -590,6 +593,27 @@ addLayer("a", {
             goalTooltip() {return"Get stuck in Cookie Time"},
 
             doneTooltip() {return"Reward: A new layer but only to get out of your clue upgrades"},
+
+        },
+        22: {
+            name: "That mistake seems useful",
+            done() {
+				return (hasChallenge('d', 11))
+			},
+            goalTooltip() {return"Finish the Despair Challenge"},
+
+            doneTooltip() {return"Reward: The promised new layer is finally unlocked"},
+
+        },
+
+        27: {
+            name: "Secrets all around",
+            done() {
+				return (hasUpgrade('d', 44))
+			},
+            goalTooltip() {return"Why so desperate?"},
+
+            doneTooltip() {return"Reward: something, surely, sometime"},
 
         },
 
