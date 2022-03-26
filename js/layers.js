@@ -614,6 +614,8 @@ addLayer("a", {
             goalTooltip() {return"Why so desperate?"},
 
             doneTooltip() {return"Reward: something, surely, sometime"},
+            unlocked() {if (hasAchievement('a', 27)) return true
+            },
 
         },
 
