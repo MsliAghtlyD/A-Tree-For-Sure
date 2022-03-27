@@ -98,12 +98,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: fourth challenge"},
+	function(){return"Current endgame: unlock fird layer"},
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (hasChallenge('m', 14))
+	return (hasChallenge('d', 11))
 }
 
 
