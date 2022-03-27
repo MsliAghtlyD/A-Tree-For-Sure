@@ -203,7 +203,7 @@ addLayer("m", {
         },
     effectDescription() {
         eff = this.effect();
-        return "your max mysteries boost your clue gain by "+format(eff)
+        return " boost your clue based on your max mysteries gain by "+format(eff)
 
     },
 
@@ -268,7 +268,7 @@ addLayer("m", {
             unlocked() {if(hasUpgrade('m', 12)) return true}
         },
         12: {
-            name: "Yet somehow worse than the previous one",
+            name: `Yet somehow worse <br>than the previous one`,
             challengeDescription: `Get clue^0.5`,
             goalDescription:"get 100 questions while having 'Cookie time'",
             rewardDescription:"clue base gets boosted... again",
@@ -279,7 +279,7 @@ addLayer("m", {
             },
         },
         13: {
-            name: "That doesn't seem like a new layer",
+            name: `That doesn't seem <br>like a new layer`,
             challengeDescription: `Get questions AND clues^0.5`,
             goalDescription:"get 10 000 questions.",
             rewardDescription:`what base gets boosted? <br> <br> None, get 100% of clue gain every second though`,
@@ -303,7 +303,7 @@ addLayer("m", {
     milestones: {
         0: {
             requirementDescription: "4 mysteries",
-            effectDescription: "No more. For now",
+            effectDescription: "No more mysteries. For now",
             done() { return player.m.points.gte(4) }
         },
         1: {
@@ -330,8 +330,8 @@ addLayer("d", {
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
     }},
 
-    color: "#000000",                       // The color for this layer, which affects many elements.
-    resource: "dismay points",            // The name of this layer's main prestige resource.
+    color: "#000099",                       // The color for this layer, which affects many elements.
+    resource: "despair points",            // The name of this layer's main prestige resource.
     row: 1,                                 // The row this layer is on (0 is the first row).
 
     baseResource: "questions",                 // The name of the resource your prestige gain is based on.
@@ -543,7 +543,7 @@ addLayer("a", {
 			},
             goalTooltip() {return"Get the the seventh clue upgrade"},
 
-            doneTooltip() {return"Reward: A fleeting feeling of despair"},
+            doneTooltip() {return"Reward: A fleeting feeling of despair and a mystery challenge"},
 
         },
         14: {
@@ -592,7 +592,7 @@ addLayer("a", {
 			},
             goalTooltip() {return"Get stuck in Cookie Time"},
 
-            doneTooltip() {return"Reward: A new layer but only to get out of your clue upgrades"},
+            doneTooltip() {return"Reward: A new layer but only to get out of Cookie Time"},
 
         },
         22: {
