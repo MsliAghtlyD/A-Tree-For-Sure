@@ -119,6 +119,13 @@ addLayer("c", {
                 else if(hasAchievement("a", 13)) if (hasUpgrade('c', 21)) return true
                 
             },
+            effect() {
+                let eff = new Decimal (0.1)
+                if(hasUpgrade('d', 11)) eff = eff.times(2.5)
+                if(hasUpgrade('d', 12)) eff = eff.times(2)
+                if(hasUpgrade('d', 13)) eff = eff.times(3)
+                return eff
+            },
             onPurchase() { 
                 player.c.points = new Decimal(1)
                 player.points = new Decimal(1)
@@ -483,7 +490,26 @@ addLayer("t", {
 
     layerShown() { 
         
-        if (hasChallenge('d', 11) )return true }            // Returns a bool for if this layer's node should be visible in the tree.
+        if (hasChallenge('d', 11) )return true },            // Returns a bool for if this layer's node should be visible in the tree.
+
+    upgrades:{
+        11:{
+            title: "Hang in there, we're gonna do this Cookie in",
+            description: "First nerf on Cookie Time",
+            cost: new Decimal(1),
+        },
+        12:{
+            title: "Soon, soon he'll be a Good Boy again",
+            description: "Second nerf on Cookie Time",
+            cost: new Decimal(1),
+        },
+        13:{
+            title: "Ladies and Gentlemen, we got him",
+            description: "Cookie Time finally does a boost instead of a nerf",
+            cost: new Decimal(1),
+        },
+
+    },
 })
 
 
