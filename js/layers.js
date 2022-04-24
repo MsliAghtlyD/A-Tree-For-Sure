@@ -121,9 +121,9 @@ addLayer("c", {
             },
             effect() {
                 let eff = new Decimal (0.1)
-                if(hasUpgrade('d', 11)) eff = eff.times(2.5)
-                if(hasUpgrade('d', 12)) eff = eff.times(2)
-                if(hasUpgrade('d', 13)) eff = eff.times(3)
+                if(hasUpgrade('t', 11)) eff = eff.times(2.5)
+                if(hasUpgrade('t', 12)) eff = eff.times(2)
+                if(hasUpgrade('t', 13)) eff = eff.times(3)
                 return eff
             },
             onPurchase() { 
@@ -162,10 +162,15 @@ addLayer("c", {
             unlocked() {if (hasChallenge('m', 12)) return true},
         },
         31:{
-            title: "No. No it's not.",
-            description: "Unlock another mystery challenge",
+            title: `No. No it's not.`,
+            description: `Unlock another mystery challenge <br> And get a boost on clue based on clue upgrades bought`,
             cost: new Decimal(1e12),
-            unlocked() {if (hasUpgrade('c', 26)) if(hasChallenge('m', 13)) return true},
+            unlocked() {return true},
+            effect() {
+                return player[this.layer].upgrades[0]
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        
         },
         32:{
             title: "It is called up-grade though",
