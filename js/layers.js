@@ -35,14 +35,16 @@ addLayer("c", {
         mult=mult.times(Meff);
         if (inChallenge('m',12 )) mult = mult.pow(0.5)
         if (inChallenge('m',13 )) mult = mult.pow(0.5)
-    
+        
         
         return mult
     },
 
     passiveGeneration(){
-        if (hasChallenge('m', 13)) return new Decimal (1)
-
+        let pg = new Decimal(0)
+        if (hasChallenge('m', 13)) pg = pg.add(1)
+        if (hasUpgrade('c', 31 )) pg = pg.times(upgradeEffect('c', 31))
+        return pg
     },
     
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -54,7 +56,9 @@ addLayer("c", {
         {key: "c", description: "C: Reset for Cryptic Clues", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
+
     branches: [["m", 1], ["d", 1]],
+
     upgrades:{
         11:{
             title: "Start playing",
@@ -75,7 +79,8 @@ addLayer("c", {
             effect() {
                 let eff= player[this.layer].points.add(1).pow(0.5)
                 if(hasUpgrade('c',15)) eff=eff.times(upgradeEffect('c', 15))
-                return eff
+                softeff = softcap(eff, new Decimal("e15"), new Decimal(0.1))
+                return softeff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -95,7 +100,9 @@ addLayer("c", {
             cost: new Decimal(50),
             unlocked() {if (hasUpgrade('m', 11)) if(hasUpgrade('c', 14)) return true},
             effect() {
-                return player[this.layer].points.add(1).pow(0.35)
+                let eff = player[this.layer].points.add(1).pow(0.35)
+                softeff = softcap(eff, new Decimal("e6"), new Decimal(0.7))
+                return softeff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -105,7 +112,9 @@ addLayer("c", {
             cost: new Decimal(250),
             unlocked() {if (hasUpgrade('c', 15)) return true},
             effect() {
-                return player.points.add(1).pow(0.26)
+                let eff = player.points.add(1).pow(0.26)
+                softeff = softcap(eff, new Decimal("2e6"), new Decimal(0.25))
+                return softeff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -121,9 +130,9 @@ addLayer("c", {
             },
             effect() {
                 let eff = new Decimal (0.1)
-                if(hasUpgrade('d', 11)) eff = eff.times(2.5)
-                if(hasUpgrade('d', 12)) eff = eff.times(2)
-                if(hasUpgrade('d', 13)) eff = eff.times(3)
+                if(hasUpgrade('t', 11)) eff = eff.times(2.5)
+                if(hasUpgrade('t', 21)) eff = eff.times(2)
+                if(hasUpgrade('t', 31)) eff = eff.times(2.5)
                 return eff
             },
             onPurchase() { 
@@ -147,7 +156,7 @@ addLayer("c", {
             cost: new Decimal(1e10),
             unlocked() {
                 if(inChallenge('m', 12)) return false
-                else if (hasAchievement('a', 14)) return true},
+                else if (hasAchievement('a', 14)) if (hasUpgrade('c', 21)) return true},
         },
         25:{
             title: "That's the...",
@@ -163,9 +172,17 @@ addLayer("c", {
         },
         31:{
             title: "No. No it's not.",
-            description: "Unlock another mystery challenge",
+            description: "Unlock another mystery challenge <br> And get a boost on passive clue gain based on clue upgrades bought",
             cost: new Decimal(1e12),
             unlocked() {if (hasUpgrade('c', 26)) if(hasChallenge('m', 13)) return true},
+            effect() {
+                let eff = new Decimal ("1.69")
+                eff = eff.pow(player[this.layer].upgrades.length)
+                if (hasUpgrade('t', 12)) return eff
+                return player[this.layer].upgrades.length
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        
         },
         32:{
             title: "It is called up-grade though",
@@ -210,7 +227,7 @@ addLayer("m", {
         },
     effectDescription() {
         eff = this.effect();
-        return " boost your clue based on your max mysteries gain by "+format(eff)
+        return " boosting your clue gain based on your max mysteries by "+format(eff)
 
     },
 
@@ -272,7 +289,7 @@ addLayer("m", {
             goalDescription:"get 1e7 questions.",
             rewardDescription:"clue base gets boosted",
             canComplete: function() {return player.points.gte(1e7)},
-            unlocked() {if(hasUpgrade('m', 12)) return true}
+            unlocked() {if(hasAchievement('a', 13)) return true}
         },
         12: {
             name: `Yet somehow worse <br>than the previous one`,
@@ -300,7 +317,7 @@ addLayer("m", {
             challengeDescription: `get questions^0.8`,
             goalDescription:"get 1e11 questions while in 'Cookie time'.",
             rewardDescription:"get a new milestone and boost mystery gain",
-            canComplete: function() {return player.points.gte(1e11)},
+            canComplete: function() {return player.points.gte(1e11)&&hasUpgrade('c', 22)},
             unlocked() {if(hasUpgrade('c', 31)) return true 
                 else if (inChallenge('m', 14)) return true
                 else if(hasChallenge('m', 14)) return true}
@@ -320,7 +337,7 @@ addLayer("m", {
         },
         2: {
             requirementDescription: "4th challenge completed",
-            effectDescription: "Keep clue upgrades",
+            effectDescription: "Keep clue upgrades on mystery resets",
             done() { return hasChallenge('m', 14) }
         },
     }
@@ -349,6 +366,10 @@ addLayer("d", {
 
     type: "normal",                         // Determines the formula used for calculating prestige currency.
     exponent: 0.00000000000000000000000000000001,                          // "normal" prestige gain is (currency^exponent).
+   
+    hotkeys: [
+        {key: "d", description: "D: Reset for Despair", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         return new Decimal(1)               // Factor in any bonuses multiplying gain here.
@@ -488,6 +509,21 @@ addLayer("t", {
     },
     branches: [["c", 0]],
 
+    effect() {
+        eff = player[this.layer].points.add(1).pow(0.35);
+        return eff
+        },
+
+    effectDescription() {
+        eff = this.effect();
+        return "not yet boosting your question gain based on your current theories by "+format(eff)
+
+    },
+
+    hotkeys: [
+        {key: "t", description: "T: Reset for Theory", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+
     layerShown() { 
         
         if (hasChallenge('d', 11) )return true },            // Returns a bool for if this layer's node should be visible in the tree.
@@ -499,19 +535,28 @@ addLayer("t", {
             cost: new Decimal(1),
         },
         12:{
-            title: "Soon, soon he'll be a Good Boy again",
-            description: "Second nerf on Cookie Time",
+            title: "It's time to get faster",
+            description: "Boosts <b>No. No it's not.</b>'s formula",
             cost: new Decimal(1),
         },
         13:{
+            title: "It's time to get creative",
+            description: "wait for another update",
+            cost: new Decimal(20),
+        },
+        21:{
+            title: "Soon, soon he'll be a Good Boy again",
+            description: "Second nerf on Cookie Time",
+            cost: new Decimal(10000),
+        },
+        31:{
             title: "Ladies and Gentlemen, we got him",
             description: "Cookie Time finally does a boost instead of a nerf",
-            cost: new Decimal(1),
+            cost: new Decimal(100000000),
         },
 
     },
 })
-
 
 
 
@@ -533,7 +578,8 @@ addLayer("a", {
     },
     tabFormat: [
         ["display-text",
-            function() { return `You found ${player.a.achievements.length} Achievements` },
+            function() { return `You found ${player.a.achievements.length} Achievements <br>
+             boosting your self esteem by `+format(eff.pow(1.75))},
             {"font-size": "32px"}],
         "blank",
         "blank",
@@ -541,7 +587,7 @@ addLayer("a", {
         "blank",
         "achievements",
     ],
-
+    
     achievements: {
         11: {
             name: "First win!",
@@ -550,7 +596,7 @@ addLayer("a", {
 			},
             goalTooltip() {return"Get the second upgrade"},
 
-            doneTooltip() {return"Reward: A fleeting feeling of accomplishment"},
+            doneTooltip() {return"Reward : A fleeting feeling of accomplishment"},
 
         },
         12:{
@@ -560,7 +606,7 @@ addLayer("a", {
 			},
             goalTooltip() {return"Get the second layer"},
 
-            doneTooltip() {return"Reward: The second layer"},
+            doneTooltip() {return"Reward : The second layer"},
         },
         13: {
             name: "That's... not helping",
@@ -569,7 +615,7 @@ addLayer("a", {
 			},
             goalTooltip() {return"Get the the seventh clue upgrade"},
 
-            doneTooltip() {return"Reward: A fleeting feeling of despair and a mystery challenge"},
+            doneTooltip() {return"Reward : A fleeting feeling of despair and a mystery challenge"},
 
         },
         14: {
@@ -579,7 +625,7 @@ addLayer("a", {
 			},
             goalTooltip() {return"Get 1e10 clues"},
 
-            doneTooltip() {return"Reward: Cookie time is no longer required to continue purchasing clue upgrades"},
+            doneTooltip() {return"Reward : Cookie time is no longer required to continue purchasing clue upgrades"},
 
         },
         15:{
@@ -588,7 +634,7 @@ addLayer("a", {
 
             goalTooltip() {return"While in second mystery challenge buy the upgrade that unlocks it"},
 
-            doneTooltip() {return"Reward: Why would you get rewarded for that?"},
+            doneTooltip() {return"Reward : Why would you get rewarded for that?"},
         },
         16: {
             name: "You have been bamboozled",
@@ -597,7 +643,7 @@ addLayer("a", {
 			},
             goalTooltip() {return"Get a new layer"},
 
-            doneTooltip() {return"Reward: not a new layer but more of those pesky challenges"},
+            doneTooltip() {return"Reward : not a new layer but more of those pesky challenges"},
 
         },
         17: {
@@ -607,7 +653,7 @@ addLayer("a", {
 			},
             goalTooltip() {return"This doesn't seem right"},
 
-            doneTooltip() {return"Reward: something, surely, sometime"},
+            doneTooltip() {return"Reward : A way to boost passive clue gain later on (but don't forget to buy it back after resets)"},
             unlocked() {if (hasAchievement('a', 17)) return true
             },
         },
@@ -618,7 +664,7 @@ addLayer("a", {
 			},
             goalTooltip() {return"Get stuck in Cookie Time"},
 
-            doneTooltip() {return"Reward: A new layer but only to get out of Cookie Time"},
+            doneTooltip() {return"Reward : A new layer but only to get out of Cookie Time"},
 
         },
         22: {
@@ -628,7 +674,18 @@ addLayer("a", {
 			},
             goalTooltip() {return"Finish the Despair Challenge"},
 
-            doneTooltip() {return"Reward: The promised new layer is finally unlocked"},
+            doneTooltip() {return"Reward : The promised new layer is finally unlocked"},
+
+        },
+
+        23: {
+            name: "But hey, that's just a ",
+            done() {
+				return (player.t.points.gte(1))
+			},
+            goalTooltip() {return"Get your first theory"},
+
+            doneTooltip() {return"Reward : Erm, this achievement I guess?"},
 
         },
 
@@ -639,7 +696,7 @@ addLayer("a", {
 			},
             goalTooltip() {return"Why so desperate?"},
 
-            doneTooltip() {return"Reward: something, surely, sometime"},
+            doneTooltip() {return"Reward : something, surely, sometime"},
             unlocked() {if (hasAchievement('a', 27)) return true
             },
 

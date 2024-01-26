@@ -13,11 +13,11 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.035",
+	num: "0.0351",
 	name: "A beginning",
 }
 
-let changelog = `<h1>Changelog:</h1><br>
+let changelog = `<h1>Changelog:</h1><br><br>
 	<h3>v0.0</h3><br>
 		- Added things.<br>
 		- Added stuff.<br><br>
@@ -55,7 +55,17 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Found out game version was still "0.01"<br>
 		- Made second secret achievement <br>
 		- Corrected a few bugs<br>
-		- Created a lot more<br>`
+		- Created a lot more<br><br>
+	<h3>v0.0351</h3><br>
+		- Almost two full years have passed<br>
+		- Changed a lot of things that felt wrong<br>
+		- Added an "effect" to first secret upgrade<br>
+		- Added some theory upgrades and changed their use<br>
+		- Created a galaxy account to try to finally get feedback<br>
+		- Endgame has not moved, but Theory started to get a bit more fleshed out<br>
+		- Corrected a few bugs<br>
+		- Created a lot more<br><br>`
+	
 
 	
 
@@ -88,7 +98,8 @@ function getPointGen() {
 	if (inChallenge('d', 11)) gain = gain.pow(0.1)
 	if (inChallenge('m',11)) gain = gain.pow(0.8)
 	if (inChallenge('m',13)) gain = gain.pow(0.5)
-	if(inChallenge('m', 14)) if (hasUpgrade('c', 22)) gain = gain.pow(8)
+	if (inChallenge('m', 14)) if (hasUpgrade('c', 22)) gain = gain.pow(8)
+	// if (player.t.unlocked) gain = gain.pow(player.t.effect) ???
 	return gain
 }
 
@@ -98,12 +109,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: unlock fird layer"},
+	function(){return"Current endgame: unlock fourth layer"},
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (hasChallenge('d', 11))
+	return (player.t.points.gte(1))
 }
 
 
