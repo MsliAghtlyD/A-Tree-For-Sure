@@ -455,7 +455,7 @@ addLayer("d", {
             unlocked() {if (hasUpgrade('d', 41)) return true},
         },
         43:{
-            title: "Sorry!",
+            title: "Sorry!)",
             cost: new Decimal(1),
             unlocked() {if (hasUpgrade('d', 42)) return true},
         },
