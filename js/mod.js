@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0351",
+	num: "0.0352",
 	name: "A beginning",
 }
 
@@ -64,6 +64,13 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Created a galaxy account to try to finally get feedback<br>
 		- Endgame has not moved, but Theory started to get a bit more fleshed out<br>
 		- Corrected a few bugs<br>
+		- Created a lot more<br><br>
+	<h3>v0.0352</h3><br>
+		- Achievement layer's effect is fixed<br>
+		- Basically I figured out how to make layer effect, so mystery and theory don't have to use convoluted formulas anymore<br>
+		- Theory got a buyable and two upgrades, but is still the endgame<br>
+		- Thank you galaxy for all the warm comments<br>
+		- Corrected a few bugs<br>
 		- Created a lot more<br><br>`
 	
 
@@ -99,7 +106,7 @@ function getPointGen() {
 	if (inChallenge('m',11)) gain = gain.pow(0.8)
 	if (inChallenge('m',13)) gain = gain.pow(0.5)
 	if (inChallenge('m', 14)) if (hasUpgrade('c', 22)) gain = gain.pow(8)
-	// if (player.t.unlocked) gain = gain.pow(player.t.effect) ???
+	if (player.t.unlocked) gain = gain.times(tmp["t"].effect)
 	return gain
 }
 

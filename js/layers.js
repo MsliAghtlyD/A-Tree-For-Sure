@@ -29,10 +29,7 @@ addLayer("c", {
         if (hasChallenge('m', 11)) mult = mult.add(9)
         if (hasChallenge('m', 12)) mult = mult.add(90)
         if (hasUpgrade('c', 14)) mult = mult.times(upgradeEffect('c', 14))
-        let Meff = player.m.best.add(1).pow(0.75);
-        let qEff = player.m.total.pow(0.6725).plus(1);
-        Meff = Meff.times(qEff);
-        mult=mult.times(Meff);
+        if (player.m.unlocked) mult = mult.times(temp["m"].effect)
         if (inChallenge('m',12 )) mult = mult.pow(0.5)
         if (inChallenge('m',13 )) mult = mult.pow(0.5)
         
@@ -222,12 +219,14 @@ addLayer("m", {
     ],
    
     effect() {
-        eff = player[this.layer].best.add(1).pow(0.75);
+        eff = player[this.layer].best.add(1).pow(0.75)
+        let qEff = player.m.total.pow(0.6725).plus(1)
+        eff = eff.times(qEff)
         return eff
         },
     effectDescription() {
         eff = this.effect();
-        return " boosting your clue gain based on your max mysteries by "+format(eff)
+        return " boosting your clue gain based on your max and current mysteries by "+format(eff)
 
     },
 
@@ -502,7 +501,9 @@ addLayer("t", {
     exponent: 0.25,                          // "normal" prestige gain is (currency^exponent).
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
-        return new Decimal(1)               // Factor in any bonuses multiplying gain here.
+        let mult = new Decimal(1)               // Factor in any bonuses multiplying gain here.
+        mult = mult.times(buyableEffect("t", 11))
+        return mult                                       
     },
     gainExp() {                             // Returns your exponent to your gain of the prestige resource.
         return new Decimal(1)
@@ -516,7 +517,7 @@ addLayer("t", {
 
     effectDescription() {
         eff = this.effect();
-        return "not yet boosting your question gain based on your current theories by "+format(eff)
+        return "boosting your question gain based on your current theories by "+format(eff)
 
     },
 
@@ -540,21 +541,48 @@ addLayer("t", {
             cost: new Decimal(1),
         },
         13:{
-            title: "It's time to get creative",
-            description: "wait for another update",
+            title: "Back to basics",
+            description: "Unlock a buyable",
             cost: new Decimal(20),
         },
         21:{
             title: "Soon, soon he'll be a Good Boy again",
             description: "Second nerf on Cookie Time",
-            cost: new Decimal(10000),
+            cost: new Decimal(1e11),
         },
         31:{
             title: "Ladies and Gentlemen, we got him",
             description: "Cookie Time finally does a boost instead of a nerf",
-            cost: new Decimal(100000000),
+            cost: new Decimal(1e110),
         },
 
+    },
+    buyables: {
+        11: {
+            title: "It was always just a dream?",
+            unlocked() { return hasUpgrade("t", 13) },
+            cost(x) {
+                let base= new Decimal (5)
+                return new Decimal(1e1).mul(base.pow(x)).floor()
+            },
+            display() {
+                return "Cost: " + format(tmp[this.layer].buyables[this.id].cost) + " theories" + "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "<br>Effect: Boost Theory gain by x" + format(buyableEffect(this.layer, this.id))
+            },
+            canAfford() {
+                return player[this.layer].points.gte(this.cost())
+            },
+            buy() {
+                let cost = new Decimal (1)
+                player[this.layer].points = player[this.layer].points.sub(this.cost().mul(cost))
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            effect(x) {
+                let base1 = new Decimal(2)
+                let base2 = x
+                let eff = base1.pow(base2)
+                return eff
+            },
+        },
     },
 })
 
@@ -587,6 +615,11 @@ addLayer("a", {
         "blank",
         "achievements",
     ],
+    
+    effect() {
+        eff = new Decimal(player.a.achievements.length)
+        return eff
+        },
     
     achievements: {
         11: {
@@ -688,6 +721,17 @@ addLayer("a", {
             doneTooltip() {return"Reward : Erm, this achievement I guess?"},
 
         },
+
+        24: {
+            name: "Wow a new mechanic?",
+            done() {
+				return (player.t.points.gte(1))
+			},
+            goalTooltip() {return"Buy third Theory upgrade"},
+
+            doneTooltip() {return"Reward : You know the buyable is reward enough"},
+
+        }, 
 
         27: {
             name: "Secrets all around",
