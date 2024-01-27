@@ -68,7 +68,7 @@ let changelog = `<h1>Changelog:</h1><br><br>
 	<h3>v0.0352</h3><br>
 		- Achievement layer's effect is fixed<br>
 		- Basically I figured out how to make layer effect, so mystery and theory don't have to use convoluted formulas anymore<br>
-		- Theory got a buyable and two upgrades, but is still the endgame<br>
+		- Theory got a buyable and two upgrades, but is still the current endgame<br>
 		- Thank you galaxy for all the warm comments<br>
 		- Corrected a few bugs<br>
 		- Created a lot more<br><br>`
