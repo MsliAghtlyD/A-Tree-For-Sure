@@ -41,6 +41,7 @@ addLayer("c", {
         let pg = new Decimal(0)
         if (hasChallenge('m', 13)) pg = pg.add(1)
         if (hasUpgrade('c', 31 )) pg = pg.times(upgradeEffect('c', 31))
+        if (hasAchievement('a', 37)) pg = pg.times(upgradeEffect('c', 31)).times(0.3)
         return pg
     },
     
@@ -165,7 +166,7 @@ addLayer("c", {
             title: "...next layer over there?",
             description: "Unlock more content",
             cost: new Decimal(1e9),
-            unlocked() {if (hasChallenge('m', 12)) return true},
+            unlocked() {if (hasChallenge('m', 12) && (hasUpgrade('c', 21))) return true},
         },
         31:{
             title: "No. No it's not.",
@@ -182,8 +183,8 @@ addLayer("c", {
         
         },
         32:{
-            title: "It is called up-grade though",
-            description: "Nerf clue gain for the Greater Good.",
+            title: "They're all in on it, and I'll proove it",
+            description: "Give you the opportunity to do friends or forums resets",
             cost: new Decimal(1e15),
             unlocked() {if (hasUpgrade('c', 22)) return true},
         },
@@ -222,6 +223,7 @@ addLayer("m", {
         eff = player[this.layer].best.add(1).pow(0.75)
         let qEff = player.m.total.pow(0.6725).plus(1)
         eff = eff.times(qEff)
+        if (inChallenge("t", 11)) eff= eff.pow(0)
         return eff
         },
     effectDescription() {
@@ -249,10 +251,7 @@ addLayer("m", {
     },
 
     layerShown() { 
-        if(hasUpgrade('c', 14)) return true 
-        else  if (player.m.best.gte(1)) return true
-        else if (hasUpgrade('m', 11)) return true
-    },          // Returns a bool for if this layer's node should be visible in the tree.
+        if(hasUpgrade('c', 14)||player.m.best.gte(1)||hasUpgrade('m', 11)|| player.fo.unlocked ||player.fr.unlocked) return true},          // Returns a bool for if this layer's node should be visible in the tree.
 
     upgrades: {
         11:{
@@ -315,11 +314,11 @@ addLayer("m", {
             name: "I need to nerf that",
             challengeDescription: `get questions^0.8`,
             goalDescription:"get 1e11 questions while in 'Cookie time'.",
-            rewardDescription:"get a new milestone and boost mystery gain",
+            rewardDescription:"get a new milestone and boost mystery gain<br> But at a cost",
             canComplete: function() {return player.points.gte(1e11)&&hasUpgrade('c', 22)},
-            unlocked() {if(hasUpgrade('c', 31)) return true 
+            unlocked() { if(hasChallenge('m', 14)) return false
                 else if (inChallenge('m', 14)) return true
-                else if(hasChallenge('m', 14)) return true}
+                else if(hasUpgrade('c', 31)) return true}
         },
     },
 
@@ -349,7 +348,7 @@ addLayer("m", {
 
 addLayer("d", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
-        unlocked: true,                     // You can add more variables here to add them to your layer.
+        unlocked: false,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
     }},
 
@@ -377,9 +376,25 @@ addLayer("d", {
         return new Decimal(1)
     },
 
+    doReset(resettingLayer) {
+        let keep = [];
+            keep.push("upgrades")
+            keep.push("challenges")
+            if (layers[resettingLayer].row > this.row) layerDataReset("d", keep)
+    },
+
+    canReset() {
+        if (hasChallenge("m", 14)) if(hasUpgrade("c", 22))  return true
+        return false
+
+    },
+
     layerShown() { 
         
-        if (hasUpgrade("c", 22)) if(hasChallenge("m", 14)) return true },            // Returns a bool for if this layer's node should be visible in the tree.
+        if (hasUpgrade("c", 22)) if(hasChallenge("m", 14)) if (player.points.gte(100)) return true 
+        if(hasChallenge("d", 11))  return false
+        if (hasUpgrade("d", 11))  return true
+        return false},            // Returns a bool for if this layer's node should be visible in the tree.
 
     upgrades:{
         11:{
@@ -468,9 +483,9 @@ addLayer("d", {
             11: {
                 name: "A freebie, if you're patient that is",
                 challengeDescription: `Permanent Cookie Time`,
-                goalDescription:`get 11 questions and leave this challenge<br>IF IT'S NOT YELLOW IT'S NOT OVER`,
+                goalDescription:`get 1000 questions and leave this challenge<br>IF IT'S NOT YELLOW IT'S NOT OVER`,
                 rewardDescription:"finally get that new layer.",
-                canComplete: function() {return player.points.gte(11)},
+                canComplete: function() {return player.points.gte(1000)},
                 unlocked() {if(hasUpgrade('d', 11)) return true}
             },
         
@@ -511,13 +526,22 @@ addLayer("t", {
     branches: [["c", 0]],
 
     effect() {
-        eff = player[this.layer].points.add(1).pow(0.35);
+        eff = player[this.layer].points.add(1).pow(0.35)
+        if (inChallenge("t", 11)) eff = eff.pow(0)
+        if (hasChallenge("t", 11)) eff = eff.times(3.21)
         return eff
         },
 
     effectDescription() {
         eff = this.effect();
+        if (hasChallenge("t", 11)) return "<b>generously</b> boosting your question gain based on your current theories by "+format(eff)
         return "boosting your question gain based on your current theories by "+format(eff)
+
+    },
+
+    canReset() {
+        if (inChallenge("m", 4)) return false
+        else if (player.c.points > 1e12) return true
 
     },
 
@@ -527,7 +551,7 @@ addLayer("t", {
 
     layerShown() { 
         
-        if (hasChallenge('d', 11) )return true },            // Returns a bool for if this layer's node should be visible in the tree.
+        if (hasChallenge('d', 11) || player.fo.unlocked ||player.fr.unlocked)return true },            // Returns a bool for if this layer's node should be visible in the tree.
 
     upgrades:{
         11:{
@@ -538,17 +562,19 @@ addLayer("t", {
         12:{
             title: "It's time to get faster",
             description: "Boosts <b>No. No it's not.</b>'s formula",
+            unlocked() {if (hasUpgrade('t', 11)) return true},
             cost: new Decimal(1),
         },
         13:{
             title: "Back to basics",
-            description: "Unlock a buyable",
+            description: "Unlock a buyable<br>First level will cost you 5 theories",
+            unlocked() {if (hasUpgrade('t', 12)) return true},
             cost: new Decimal(20),
         },
         21:{
             title: "Soon, soon he'll be a Good Boy again",
-            description: "Second nerf on Cookie Time",
-            cost: new Decimal(1e11),
+            description: "Second nerf on Cookie Time and unlocks two new layers",
+            cost: new Decimal(1000),
         },
         31:{
             title: "Ladies and Gentlemen, we got him",
@@ -563,7 +589,7 @@ addLayer("t", {
             unlocked() { return hasUpgrade("t", 13) },
             cost(x) {
                 let base= new Decimal (5)
-                return new Decimal(1e1).mul(base.pow(x)).floor()
+                return new Decimal(5).mul(base.pow(x)).floor()
             },
             display() {
                 return "Cost: " + format(tmp[this.layer].buyables[this.id].cost) + " theories" + "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "<br>Effect: Boost Theory gain by x" + format(buyableEffect(this.layer, this.id))
@@ -577,15 +603,147 @@ addLayer("t", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             effect(x) {
-                let base1 = new Decimal(2)
+                let base1 = new Decimal(3)
                 let base2 = x
                 let eff = base1.pow(base2)
                 return eff
             },
         },
     },
+    challenges: {
+        11: {
+            name: "Ness is comic?",
+            challengeDescription: `No more mystery or theory layers bonuses for the likes of you`,
+            goalDescription:"get 1e7 cryptic clues while in Cookie time:.",
+            rewardDescription:"Theory layer's boost's formula is much more generous",
+            canComplete: function() {return player.c.points.gte(1e7)&&hasUpgrade('c', 22)},
+            unlocked() {if(hasAchievement('a', 25)) return true}
+        },
+    },
+})
+addLayer("fo", {
+    startData() { return {                  // startData is a function that returns default data for a layer. 
+        unlocked: false,                     // You can add more variables here to add them to your layer.
+        points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+    }},
+
+    color: "#FF1D1D",                       // The color for this layer, which affects many elements.
+    resource: "Forums",            // The name of this layer's main prestige resource.
+    row: 2,                                 // The row this layer is on (0 is the first row).
+
+    baseResource: "cryptic clues",                 // The name of the resource your prestige gain is based on.
+    baseAmount() { return player.c.points },  // A function to return the current amount of baseResource.
+
+    requires: new Decimal(1e15),              // The amount of the base needed to  gain 1 of the prestige currency.
+                                            // Also the amount required to unlock the layer.
+
+    type: "normal",                         // Determines the formula used for calculating prestige currency.
+    exponent: 0.25,                          // "normal" prestige gain is (currency^exponent).
+
+    gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
+        let mult = new Decimal(1)               // Factor in any bonuses multiplying gain here.
+        return mult                                       
+    },
+    gainExp() {                             // Returns your exponent to your gain of the prestige resource.
+        return new Decimal(1)
+    },
+    branches: [["t", 1]],
+
+    effect() {
+        eff = player[this.layer].points.add(1).pow(0.35);
+        return eff
+        },
+
+    effectDescription() {
+        eff = this.effect();
+        return "boosting your friends gain by "+format(eff)
+
+    },
+
+    canReset() {
+        if (inChallenge("m", 4)) return false
+        else if (player.c.points.gte(1e15)) if(hasUpgrade("c", 32)) return true
+        else return false
+
+    },
+
+    hotkeys: [
+        {key: "f", description: "F: Reset for forum", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+
+    layerShown() { 
+        
+        if (hasUpgrade('t', 21) )return true 
+        else if (player.fo.best.gte(1)) return true},            // Returns a bool for if this layer's node should be visible in the tree.
+
+    upgrades:{
+        
+
+    },
+   
 })
 
+addLayer("fr", {
+    startData() { return {                   // startData is a function that returns default data for a layer. 
+        unlocked: false,                     // You can add more variables here to add them to your layer.
+        points: new Decimal(0),              // "points" is the internal name for the main resource of the layer.
+    }},
+
+    color: "#ED57D9",                       // The color for this layer, which affects many elements.
+    resource: "Friends",                    // The name of this layer's main prestige resource.
+    row: 2,                                 // The row this layer is on (0 is the first row).
+
+    baseResource: "cryptic clues",                 // The name of the resource your prestige gain is based on.
+    baseAmount() { return player.c.points },       // A function to return the current amount of baseResource.
+
+    requires: new Decimal(1e15),                // The amount of the base needed to  gain 1 of the prestige currency.
+                                                // Also the amount required to unlock the layer.
+
+    type: "normal",                             // Determines the formula used for calculating prestige currency.
+    exponent: 0.25,                             // "normal" prestige gain is (currency^exponent).
+
+    gainMult() {                                // Returns your multiplier to your gain of the prestige resource.
+        let mult = new Decimal(1)               // Factor in any bonuses multiplying gain here.
+        return mult                                       
+    },
+    gainExp() {                                 // Returns your exponent to your gain of the prestige resource.
+        return new Decimal(1)
+    },
+    branches: [["t", 1]],
+
+    effect() {
+        eff = player[this.layer].points.add(1).pow(0.35);
+        return eff
+        },
+
+    effectDescription() {
+        eff = this.effect();
+        return "boosting your theory gain based on your current friends by "+format(eff)
+
+    },
+
+    canReset() {
+        if (inChallenge("m", 4)) return false
+        else if (player.c.points.gte(1e15)) if(hasUpgrade("c", 32)) return true
+        else return false
+
+    },
+
+    hotkeys: [
+        {key: "F", description: "f+Maj: Reset for Friends", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+
+    layerShown() { 
+        
+        if (hasUpgrade('t', 21) )return true 
+        else if (player.fr.best.gte(1)) return true},             // Returns a bool for if this layer's node should be visible in the tree.
+
+    upgrades:{
+        
+
+    },
+    
+})
 
 
 
@@ -691,6 +849,16 @@ addLayer("a", {
             },
         },
         21: {
+            name: "You win some you lose some",
+            done() {
+				return(hasChallenge("m", 14))
+			},
+            goalTooltip() {return"Finish mystery challenge 4"},
+
+            doneTooltip() {return"Guess that's nerfed enough"},
+
+        },
+        22: {
             name: "That was a mistake",
             done() {
 				if(hasChallenge("m", 14)) return (hasUpgrade('c', 22))
@@ -700,7 +868,7 @@ addLayer("a", {
             doneTooltip() {return"Reward : A new layer but only to get out of Cookie Time"},
 
         },
-        22: {
+        23: {
             name: "That mistake seems useful",
             done() {
 				return (hasChallenge('d', 11))
@@ -711,7 +879,7 @@ addLayer("a", {
 
         },
 
-        23: {
+        24: {
             name: "But hey, that's just a ",
             done() {
 				return (player.t.points.gte(1))
@@ -722,14 +890,14 @@ addLayer("a", {
 
         },
 
-        24: {
-            name: "Wow a new mechanic?",
+        25: {
+            name: "Wow new layers?",
             done() {
-				return (player.t.points.gte(1))
+				return (hasUpgrade("t", 21))
 			},
-            goalTooltip() {return"Buy third Theory upgrade"},
+            goalTooltip() {return"Buy fourth Theory upgrade"},
 
-            doneTooltip() {return"Reward : You know the buyable is reward enough"},
+            doneTooltip() {return"Funny story, you can't reset them... Would a theory challenge cheer you up?"},
 
         }, 
 
@@ -742,6 +910,19 @@ addLayer("a", {
 
             doneTooltip() {return"Reward : something, surely, sometime"},
             unlocked() {if (hasAchievement('a', 27)) return true
+            },
+
+        },
+
+        37: {
+            name: "Why would you even bother?",
+            done() {
+				if (inChallenge("t", 11))return (hasUpgrade('c', 31))
+			},
+            goalTooltip() {return"Try to buy something way too expensive in theory challenge"},
+
+            doneTooltip() {return"That was a pain guess I'll make part of <b>No. No it's not.</>'s base take effect even when not bought yet. You deserve it"},
+            unlocked() {if (hasAchievement('a', 37)) return true
             },
 
         },

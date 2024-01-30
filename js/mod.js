@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0352",
+	num: "0.04",
 	name: "A beginning",
 }
 
@@ -71,6 +71,14 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Theory got a buyable and two upgrades, but is still the current endgame<br>
 		- Thank you galaxy for all the warm comments<br>
 		- Corrected a few bugs<br>
+		- Created a lot more<br><br>
+	<h3>v0.04</h3><br>
+		- Theory layer is not the endgame anymore<br>
+		- Asked around in the tmt for some help and made changes around thanks to the kind souls over there<br>
+		- Added a theory buyable and challenge, and two new, completely empty layers<br>
+		- Hopefully my next update will not be in two full years<br>
+		- Added a third secret achievement that gives a nice boost <br>
+		- Corrected a few bugs<br>
 		- Created a lot more<br><br>`
 	
 
@@ -121,7 +129,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (player.t.points.gte(1))
+	return (hasUpgrade("c", 32))
 }
 
 
