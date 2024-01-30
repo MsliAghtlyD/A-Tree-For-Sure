@@ -124,7 +124,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: unlock fourth layer"},
+	function(){return"Current endgame: being able to 3rd layer reset"},
 ]
 
 // Determines when the game "ends"
