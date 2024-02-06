@@ -18,10 +18,10 @@ addLayer("c", {
     
     doReset(resettingLayer) {
         let keep = [];
-            if (hasMilestone('m', 2) && resettingLayer=="m") acM = "upgrades"
-            else acM = ""
-            if (layers[resettingLayer].row > this.row) layerDataReset("c", [acM])
+            if (hasMilestone('m', 2) && resettingLayer=="m") keep.push("upgrades")
+            if (layers[resettingLayer].row > this.row) layerDataReset("c", keep)
         },
+
 
     gainMult() {
         let mult = new Decimal(1)
@@ -32,8 +32,12 @@ addLayer("c", {
         if (player.m.unlocked) mult = mult.times(temp["m"].effect)
         if (inChallenge('m',12 )) mult = mult.pow(0.5)
         if (inChallenge('m',13 )) mult = mult.pow(0.5)
-        
-        
+        if (hasMilestone('fo', 0)) mult = mult.times(2.5)
+        if (hasMilestone('fo', 1)) mult = mult.pow(1.25)        
+        if (hasMilestone('fo', 4) && hasUpgrade("c", 23)) mult = mult.times(1.5)
+        if (hasMilestone('fo', 4) && hasUpgrade("c", 24)) mult = mult.times(1.5)
+        if (hasMilestone('fo', 4) && hasUpgrade("c", 25)) mult = mult.times(1.5)
+        if (hasMilestone('fo', 4) && hasUpgrade("c", 26)) mult = mult.times(1.5)
         return mult
     },
 
@@ -65,7 +69,7 @@ addLayer("c", {
         },
         12:{
             title: "Wonder what my name means",
-            description: "Triple your point gain.",
+            description: "Triple your questions gain.",
             cost: new Decimal(3),
             unlocked() {if (hasUpgrade('c', 11)) return true},
         },
@@ -96,7 +100,9 @@ addLayer("c", {
             title: "...back to the previous layer",
             description: "Boost questions based on clues by boosting third upgrade.",
             cost: new Decimal(50),
-            unlocked() {if (hasUpgrade('m', 11)) if(hasUpgrade('c', 14)) return true},
+            unlocked() {
+                if (hasUpgrade('m', 11)) if(hasUpgrade('c', 14)) return true
+                if (player.fo.unlocked ||player.fr.unlocked) if (hasUpgrade("c", 14)) return true},
             effect() {
                 let eff = player[this.layer].points.add(1).pow(0.35)
                 softeff = softcap(eff, new Decimal("e6"), new Decimal(0.7))
@@ -122,8 +128,8 @@ addLayer("c", {
             cost: new Decimal(1e7),
             unlocked() {
                 if(inChallenge('m', 11)) return false
-                else if (player.m.best>=4) if (hasUpgrade('c', 21)) return true
-                else if(hasAchievement("a", 13)) if (hasUpgrade('c', 21)) return true
+                if (player.m.best>=4) if (hasUpgrade('c', 21)) return true
+                if(hasAchievement("a", 13)) if (hasUpgrade('c', 21)) return true
                 
             },
             effect() {
@@ -160,7 +166,7 @@ addLayer("c", {
             title: "That's the...",
             description: "Unlock another mystery challenge",
             cost: new Decimal(1e8),
-            unlocked() {if (inChallenge('m', 12)) return true},
+            unlocked() {if (inChallenge('m', 12)) if (hasUpgrade('c', 21)) return true},
         },
         26:{
             title: "...next layer over there?",
@@ -175,18 +181,22 @@ addLayer("c", {
             unlocked() {if (hasUpgrade('c', 26)) if(hasChallenge('m', 13)) return true},
             effect() {
                 let eff = new Decimal ("1.69")
-                eff = eff.pow(player[this.layer].upgrades.length)
+                eff = eff.pow(player[this.layer].upgrades.length).add(1)
                 if (hasUpgrade('t', 12)) return eff
-                return player[this.layer].upgrades.length
+                eff = new Decimal (player[this.layer].upgrades.length)
+                eff = eff.add(1)
+                return eff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         
         },
         32:{
             title: "They're all in on it, and I'll proove it",
-            description: "Give you the opportunity to do friends or forums resets",
+            description: "Give you the opportunity to do friends and forums resets. It's time to choose.",
             cost: new Decimal(1e15),
-            unlocked() {if (hasUpgrade('c', 22)) return true},
+            unlocked() {
+                if (inChallenge('m', 14)) return false
+                if (hasUpgrade('c', 22)) return true},
         },
     },
 })
@@ -219,10 +229,20 @@ addLayer("m", {
         {key: "m", description: "M: Reset for Mystery", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
    
+    doReset(resettingLayer) {
+        let keep = [];
+            if (hasMilestone('fo', 3)) keep.push("challenges")
+            if (hasMilestone('fo', 4)) keep.push("milestones")
+            if (layers[resettingLayer].row > this.row) layerDataReset("m", keep)
+    },
+
     effect() {
+        let ueff = new Decimal (1)
+        if(hasUpgrade("m", 11)) ueff = ueff.times(2)
         eff = player[this.layer].best.add(1).pow(0.75)
         let qEff = player.m.total.pow(0.6725).plus(1)
         eff = eff.times(qEff)
+        if (hasMilestone("fo", 4)) eff = eff.times(ueff)
         if (inChallenge("t", 11)) eff= eff.pow(0)
         return eff
         },
@@ -241,12 +261,14 @@ addLayer("m", {
         let price= new Decimal(1)               // Factor in any bonuses multiplying gain here.
         if (player.m.points.gte(4)) price = price.times(1e10)
         if (hasUpgrade('m', 13)) price = price.times(0.01)
+        if (hasMilestone('fo', 2)) price = price.times(0.001)
         return price
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
         let price =  new Decimal(1)
         if (hasChallenge('m', 14)) price = price.add(1)
         if (hasChallenge('m', 14)) price = price.pow(3)
+        if (hasMilestone('fo', 0)) price = price.pow(2)
         return price
     },
 
@@ -260,11 +282,12 @@ addLayer("m", {
             cost: new Decimal(1),
         },
         12:{
-            title: "The missing link",
+            title: "Can I get another one?",
             description: "Boost questions based on questions.",
             cost: new Decimal(4),
             unlocked() {if (hasUpgrade('c', 22)) return true
                         else if (hasUpgrade('m', 12)) return true
+                        else if (player.fr.unlocked || player.fo.unlocked) return true
                     },
             effect() {
                 let eff= player.points.add(1).pow(0.05)
@@ -276,7 +299,8 @@ addLayer("m", {
             title: "I wanna make more clue upgrades",
             description: "Make yourself check the achievements and get more mysteries.",
             cost: new Decimal(4),
-            unlocked() {if (hasChallenge('m', 11)) if (hasUpgrade('m', 12)) return true},
+            unlocked() {if (hasChallenge('m', 11)) if (hasUpgrade('m', 12)) return true
+                        if (player.fr.unlocked || player.fo.unlocked) return true},
         },
     },
 
@@ -296,8 +320,9 @@ addLayer("m", {
             rewardDescription:"clue base gets boosted... again",
             canComplete: function() { return player.points.gte(100)&&hasUpgrade('c', 22)},
             unlocked() {if(hasUpgrade('c', 24)) return true
-            else if (inChallenge('m',12 ))return true
-            else if (hasChallenge('m', 12)) return true
+            if (inChallenge('m',12 ))return true
+            if (hasChallenge('m', 12)) return true
+            if (player.fr.unlocked || player.fo.unlocked) return true
             },
         },
         13: {
@@ -308,7 +333,8 @@ addLayer("m", {
             canComplete: function() {return player.points.gte(10000)},
             unlocked() {if(hasUpgrade('c', 26)) return true
             else if (inChallenge('m', 13))return true
-            else if (hasChallenge('m', 13)) return true}
+            else if (hasChallenge('m', 13)) return true
+            if (player.fr.unlocked || player.fo.unlocked) return true}
         },
         14: {
             name: "I need to nerf that",
@@ -318,7 +344,8 @@ addLayer("m", {
             canComplete: function() {return player.points.gte(1e11)&&hasUpgrade('c', 22)},
             unlocked() { if(hasChallenge('m', 14)) return false
                 else if (inChallenge('m', 14)) return true
-                else if(hasUpgrade('c', 31)) return true}
+                else if(hasUpgrade('c', 31)) return true
+                if (player.fr.unlocked || player.fo.unlocked) return true}
         },
     },
 
@@ -384,14 +411,14 @@ addLayer("d", {
     },
 
     canReset() {
-        if (hasChallenge("m", 14)) if(hasUpgrade("c", 22))  return true
+        if (hasChallenge("m", 14)) if(hasUpgrade("c", 22))if (player.points.gte(100))  return true
         return false
 
     },
 
     layerShown() { 
         
-        if (hasUpgrade("c", 22)) if(hasChallenge("m", 14)) if (player.points.gte(100)) return true 
+        if (hasUpgrade("c", 22)) if(hasChallenge("m", 14))  return true 
         if(hasChallenge("d", 11))  return false
         if (hasUpgrade("d", 11))  return true
         return false},            // Returns a bool for if this layer's node should be visible in the tree.
@@ -540,8 +567,8 @@ addLayer("t", {
     },
 
     canReset() {
-        if (inChallenge("m", 4)) return false
-        else if (player.c.points > 1e12) return true
+        if (inChallenge("m", 14)) return false
+        if (player.c.points > 1e12) return true
 
     },
 
@@ -621,6 +648,12 @@ addLayer("t", {
         },
     },
 })
+
+
+
+
+
+
 addLayer("fo", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: false,                     // You can add more variables here to add them to your layer.
@@ -634,54 +667,93 @@ addLayer("fo", {
     baseResource: "cryptic clues",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.c.points },  // A function to return the current amount of baseResource.
 
-    requires: new Decimal(1e15),              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires: new Decimal(1e16),              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
-    type: "normal",                         // Determines the formula used for calculating prestige currency.
-    exponent: 0.25,                          // "normal" prestige gain is (currency^exponent).
+    type: "static",                         // Determines the formula used for calculating prestige currency.
+    exponent: 1,                          // "normal" prestige gain is (currency^exponent).
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         let mult = new Decimal(1)               // Factor in any bonuses multiplying gain here.
         return mult                                       
     },
     gainExp() {                             // Returns your exponent to your gain of the prestige resource.
-        return new Decimal(1)
+        let mult = new Decimal(0.25)
+        return mult
     },
     branches: [["t", 1]],
 
     effect() {
-        eff = player[this.layer].points.add(1).pow(0.35);
+        eff = player[this.layer].points.add(1).pow(3);
         return eff
         },
 
     effectDescription() {
         eff = this.effect();
-        return "boosting your friends gain by "+format(eff)
+        if (!player.fr.unlocked) return "boosting your time wasted by "+format(eff)
+        //return "boosting your friends gain by "+format(eff)
+        return "boosting your time wasted by "+format(eff)
 
     },
 
     canReset() {
-        if (inChallenge("m", 4)) return false
-        else if (player.c.points.gte(1e15)) if(hasUpgrade("c", 32)) return true
-        else return false
-
+        if (!hasUpgrade('c', 32)) return false
+        if (player.c.points.gte(temp.fo.nextAt)) return true
+        return false
+        
     },
+
+    
 
     hotkeys: [
         {key: "f", description: "F: Reset for forum", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
 
     layerShown() { 
-        
+        if (hasAchievement('a', 27) && !hasAchievement('a', 31)) return false
         if (hasUpgrade('t', 21) )return true 
         else if (player.fo.best.gte(1)) return true},            // Returns a bool for if this layer's node should be visible in the tree.
 
-    upgrades:{
+    milestones:{
+        0: {
+            requirementDescription: "1 forum",
+            effectDescription: "Join a Cookie Clicker forum to understand His motivations <br> You gain more clues, but also more mysteries <br> <i>where does the bite of '87 and Ash Ketchum even come from???</i>",
+            done() { return player.fo.points.gte(1) }
+        },
+        1: {
+            requirementDescription: "2 forums",
+            effectDescription: "Join an ARG forum to understand the lore <br> You gain more clues, but also more questions <br> <i>and they do all of this stuff for fun???</i>",
+            done() { return player.fo.points.gte(2) }
+        },
+        2: {
+            requirementDescription: "3 forums",
+            effectDescription: "Join a prestige tree forum to understand the game <br> You gain more questions, and also more mysteries <br> <i>Oh. so I <b>had</b> to reset to start the game??</i>",
+            done() { return player.fo.points.gte(3) }
+        },
+        3: {
+            requirementDescription: "4 forums",
+            effectDescription: "Join an incremental game forum to understand math <br> Keep Mystery challenges on 3rd layer reset <br> <i>What does QoL means? Quarry of Limes? Questions on Lost?</i>",
+            done() { return player.fo.points.gte(4) }
+        },
+        4: {
+            requirementDescription: "5 forums",
+            effectDescription: "Join an googology forum to understand all those numbers <br> Keep Mystery milestones, and, every upgrade that unlock upgrades or challenges now lightly boosts their respective layers <br> <i>The e was not just a decoration?</i>",
+            done() { return player.fo.points.gte(5) }
+        },
+        5: {
+            requirementDescription: "6 forums",
+            effectDescription: "Join an google + forum to rekindle with your friends <br> You can do friends reset again, but be kind to them <br> <i>I was too harsh on them, I'll need their help too actually</i>",
+            done() { return player.fo.points.gte(6) }
+        },
+
         
 
     },
    
 })
+
+
+
 
 addLayer("fr", {
     startData() { return {                   // startData is a function that returns default data for a layer. 
@@ -696,7 +768,7 @@ addLayer("fr", {
     baseResource: "cryptic clues",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.c.points },       // A function to return the current amount of baseResource.
 
-    requires: new Decimal(1e15),                // The amount of the base needed to  gain 1 of the prestige currency.
+    requires: new Decimal(1e16),                // The amount of the base needed to  gain 1 of the prestige currency.
                                                 // Also the amount required to unlock the layer.
 
     type: "normal",                             // Determines the formula used for calculating prestige currency.
@@ -723,22 +795,66 @@ addLayer("fr", {
     },
 
     canReset() {
-        if (inChallenge("m", 4)) return false
-        else if (player.c.points.gte(1e15)) if(hasUpgrade("c", 32)) return true
-        else return false
+        if (!player.fo.unlocked) return false
+        if (player.fo.unlocked) if(!hasMilestone('fo', 5)) return false
+        if (player.c.points.gte(1e16)) if(hasUpgrade("c", 32)) return true
+        return false
 
     },
 
     hotkeys: [
-        {key: "F", description: "f+Maj: Reset for Friends", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "F", description: "Shift + f: Reset for Friends", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
 
     layerShown() { 
-        
+        if (hasMilestone('fo', 5)) return true
+        if (hasAchievement('a', 26) && !hasAchievement('a', 32)) return false        
         if (hasUpgrade('t', 21) )return true 
         else if (player.fr.best.gte(1)) return true},             // Returns a bool for if this layer's node should be visible in the tree.
 
     upgrades:{
+        11:{
+            title: "You came back?",
+            description: "Theory gain is multiplied by 1e400",
+            cost: new Decimal(1),
+            unlocked() {if (player.fr.unlocked) return false
+            else return true},
+        },
+        12:{
+            title: "We missed you so much",
+            description: "Mystery gain is boosted by 2eeee4",
+            cost: new Decimal(1),
+            unlocked() {if (player.fr.unlocked) return false
+                else return true},
+        },
+        13:{
+            title: "We love you so much",
+            description: "clue gain is put to the power of 1e100",
+            cost: new Decimal(1),
+            unlocked() {if (player.fr.unlocked) return false
+                else return true},
+        },
+        14:{
+            title: "come here pal",
+            description: "question are put to infinity",
+            cost: new Decimal(1),
+            unlocked() {if (player.fr.unlocked ) return false
+                else return true},
+        },
+        15:{
+            title: "it s all gonna be fine",
+            description: "you win now do it now",
+            cost: new Decimal(1),
+            unlocked() {if (player.fr.unlocked) return false
+                else return true},
+        },
+        16:{
+            title: "come here we said.",
+            description: "do it now you coward reset.",
+            cost: new Decimal(1),
+            unlocked() {if (player.fr.unlocked) return false
+                else return true},
+        },
         
 
     },
@@ -901,7 +1017,33 @@ addLayer("a", {
 
         }, 
 
+        26: {
+            name: "You chose... correctly",
+            done() {
+				return (!hasAchievement("a", 27) && (player.fo.unlocked))
+			},
+            goalTooltip() {return"Maybe I'm cheating, but..."},
+
+            doneTooltip() {return"Choose the superior new layer. You have pledged your loyalty to them, removing your ability to use the other"},
+            unlocked() {if (hasAchievement('a', 26)) return true
+        },
+
+        },
+
         27: {
+            name: "You chose... correctly",
+            done() {
+				return (!hasAchievement("a", 26) && (player.fr.unlocked))
+			},
+            goalTooltip() {return"...if you read this, so are you"},
+
+            doneTooltip() {return"Choose the superior new layer. You have pledged your loyalty to them, removing your ability to use the other"},
+            unlocked() {if (hasAchievement('a', 27)) return true
+        },
+
+        },
+
+        28: {
             name: "Secrets all around",
             done() {
 				return (hasUpgrade('d', 44))
@@ -909,8 +1051,40 @@ addLayer("a", {
             goalTooltip() {return"Why so desperate?"},
 
             doneTooltip() {return"Reward : something, surely, sometime"},
-            unlocked() {if (hasAchievement('a', 27)) return true
+            unlocked() {if (hasAchievement('a', 28)) return true
             },
+
+        },
+
+        31: {
+            name() {
+				if (hasAchievement('a', 31)) return"Felt fishy anyways"
+                return "find your friends again they love you and you love them so much"
+			},
+            done() {
+				return (hasAchievement("a", 26) && (player.fr.unlocked))
+			},
+            goalTooltip() {
+				if (hasAchievement('a', 31)) return"Cheaters never prosper, you know?"
+                return "find your friends again they love you and you love them so much"
+			},
+
+            doneTooltip() {return"You will pay for abandoning them. For a long time."},
+            unlocked() {if (hasAchievement('a', 26)) return true
+        },
+
+        },
+
+        32: {
+            name: "temp",
+            done() {
+				return (hasAchievement("a", 27) && (player.fo.unlocked))
+			},
+            goalTooltip() {return"temp"},
+
+            doneTooltip() {return"cheater"},
+            unlocked() {if (hasAchievement('a', 27)) return true
+        },
 
         },
 

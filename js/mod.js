@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.04",
+	num: "0.0425",
 	name: "A beginning",
 }
 
@@ -79,6 +79,15 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Hopefully my next update will not be in two full years<br>
 		- Added a third secret achievement that gives a nice boost <br>
 		- Corrected a few bugs<br>
+		- Created a lot more<br><br>
+	<h3>v0.0425</h3><br>
+		- Being able to 3rd layer reset is not the endgame anymore<br>
+		- Started filling the forum layer<br>
+		- Friends layer is now mostly empty so you cannot reset it first (for now)<br>
+		- Found out howw to hide a layer until a specific upgrade is bought (definitely did'nt take me more than five days)<br>
+		- Put some achievements here and there and did the groundwork for friend layer<br>
+		- Corrected a few typos<br>
+		- Corrected a few bugs<br>
 		- Created a lot more<br><br>`
 	
 
@@ -110,11 +119,14 @@ function getPointGen() {
 	if (hasUpgrade('c', 21)) gain = gain.times(upgradeEffect('c', 21))
 	if (hasUpgrade('m', 12)) gain = gain.times(upgradeEffect('m', 12))
 	if (hasUpgrade('c', 22)) gain = gain.pow(upgradeEffect('c', 22))
+	if (player.t.unlocked) gain = gain.times(tmp["t"].effect)
+	if (hasMilestone('fo', 1)) gain = gain.pow(1.2)
+	if (hasMilestone('fo', 2)) gain = gain.pow(1.25)
 	if (inChallenge('d', 11)) gain = gain.pow(0.1)
 	if (inChallenge('m',11)) gain = gain.pow(0.8)
 	if (inChallenge('m',13)) gain = gain.pow(0.5)
 	if (inChallenge('m', 14)) if (hasUpgrade('c', 22)) gain = gain.pow(8)
-	if (player.t.unlocked) gain = gain.times(tmp["t"].effect)
+	
 	return gain
 }
 
