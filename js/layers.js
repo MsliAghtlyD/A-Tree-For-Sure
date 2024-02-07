@@ -33,7 +33,9 @@ addLayer("c", {
         if (inChallenge('m',12 )) mult = mult.pow(0.5)
         if (inChallenge('m',13 )) mult = mult.pow(0.5)
         if (hasMilestone('fo', 0)) mult = mult.times(2.5)
-        if (hasMilestone('fo', 1)) mult = mult.pow(1.25)        
+        if (hasMilestone('fo', 1)) mult = mult.pow(1.25)
+        if (hasUpgrade('t', 22)) mult = mult.times(upgradeEffect('t', 22)) 
+        if (hasUpgrade("t", 23)) mult = mult.times(10)       
         if (hasMilestone('fo', 4) && hasUpgrade("c", 23)) mult = mult.times(1.5)
         if (hasMilestone('fo', 4) && hasUpgrade("c", 24)) mult = mult.times(1.5)
         if (hasMilestone('fo', 4) && hasUpgrade("c", 25)) mult = mult.times(1.5)
@@ -45,7 +47,7 @@ addLayer("c", {
         let pg = new Decimal(0)
         if (hasChallenge('m', 13)) pg = pg.add(1)
         if (hasUpgrade('c', 31 )) pg = pg.times(upgradeEffect('c', 31))
-        if (hasAchievement('a', 37)) pg = pg.times(upgradeEffect('c', 31)).times(0.3)
+        if (hasAchievement('a', 37)) pg = pg.times(upgradeEffect('c', 31)).times(0.1)
         return pg
     },
     
@@ -64,18 +66,18 @@ addLayer("c", {
     upgrades:{
         11:{
             title: "Start playing",
-            description: "Gain a question every second.",
+            description: "Gain a question every second",
             cost: new Decimal(1),
         },
         12:{
             title: "Wonder what my name means",
-            description: "Triple your questions gain.",
+            description: "Triple your questions gain",
             cost: new Decimal(3),
             unlocked() {if (hasUpgrade('c', 11)) return true},
         },
         13:{
             title: "Ask nicely what my name means",
-            description: "Boost questions based on clues.",
+            description: "Boost questions based on clues",
             cost: new Decimal(10),
             unlocked() {if (hasUpgrade('c', 12)) return true},
             effect() {
@@ -88,7 +90,7 @@ addLayer("c", {
         },
         14:{
             title: "Ask harshly what my name means",
-            description: "Boost clues based on questions.",
+            description: "Boost clues based on questions",
             cost: new Decimal(25),
             unlocked() {if (hasUpgrade('c', 13)) return true},
             effect() {
@@ -98,7 +100,7 @@ addLayer("c", {
         },
         15:{
             title: "...back to the previous layer",
-            description: "Boost questions based on clues by boosting third upgrade.",
+            description: "Boost questions based on clues by boosting third upgrade",
             cost: new Decimal(50),
             unlocked() {
                 if (hasUpgrade('m', 11)) if(hasUpgrade('c', 14)) return true
@@ -112,7 +114,7 @@ addLayer("c", {
         },
         21:{
             title: "But wouldn't that imply that...?",
-            description: "Boost questions based on questions.",
+            description: "Boost questions based on questions",
             cost: new Decimal(250),
             unlocked() {if (hasUpgrade('c', 15)) return true},
             effect() {
@@ -124,7 +126,7 @@ addLayer("c", {
         },
         22:{
             title: "Cookie time",
-            description: "Nerf question gain for the Greater Good and reset clues and question.",
+            description: "Nerf question gain for the Greater Good and reset clues and question",
             cost: new Decimal(1e7),
             unlocked() {
                 if(inChallenge('m', 11)) return false
@@ -146,7 +148,7 @@ addLayer("c", {
         },
         23:{
             title: "Cookie thyme",
-            description: "Nerf question gain for the Greater Good, reset clues and questions.",
+            description: "Nerf question gain for the Greater Good, reset clues and questions",
             cost: new Decimal(1e7),
             unlocked() {
                 if(inChallenge('m', 11)) if (hasUpgrade('c', 21)) return true               
@@ -191,7 +193,7 @@ addLayer("c", {
         
         },
         32:{
-            title: "They're all in on it, and I'll proove it",
+            title: "They're all in on it, and I'll prove it",
             description: "Give you the opportunity to do friends and forums resets. It's time to choose.",
             cost: new Decimal(1e15),
             unlocked() {
@@ -243,6 +245,7 @@ addLayer("m", {
         let qEff = player.m.total.pow(0.6725).plus(1)
         eff = eff.times(qEff)
         if (hasMilestone("fo", 4)) eff = eff.times(ueff)
+        if (hasUpgrade('fr', 21)) eff = eff.times(3)
         if (inChallenge("t", 11)) eff= eff.pow(0)
         return eff
         },
@@ -278,12 +281,12 @@ addLayer("m", {
     upgrades: {
         11:{
             title: "If you takes those clues you get...",
-            description: "greatly boost clues gain and new clue upgrades.",
+            description: "greatly boost clues gain and new clue upgrades",
             cost: new Decimal(1),
         },
         12:{
             title: "Can I get another one?",
-            description: "Boost questions based on questions.",
+            description: "Boost questions based on questions",
             cost: new Decimal(4),
             unlocked() {if (hasUpgrade('c', 22)) return true
                         else if (hasUpgrade('m', 12)) return true
@@ -297,7 +300,7 @@ addLayer("m", {
         },
         13:{
             title: "I wanna make more clue upgrades",
-            description: "Make yourself check the achievements and get more mysteries.",
+            description: "Make yourself check the achievements and get more mysteries",
             cost: new Decimal(4),
             unlocked() {if (hasChallenge('m', 11)) if (hasUpgrade('m', 12)) return true
                         if (player.fr.unlocked || player.fo.unlocked) return true},
@@ -358,7 +361,7 @@ addLayer("m", {
         1: {
             requirementDescription: "Get the third mystery upgrade and 4 mysteries",
             effectDescription: "You can buy max mysteries",
-            done() { return (hasUpgrade('m', 13))&& player.m.points==4 }
+            done() { return (hasUpgrade('m', 13))&& player.m.points.gte(4) }
         },
         2: {
             requirementDescription: "4th challenge completed",
@@ -553,9 +556,11 @@ addLayer("t", {
     branches: [["c", 0]],
 
     effect() {
-        eff = player[this.layer].points.add(1).pow(0.35)
-        if (inChallenge("t", 11)) eff = eff.pow(0)
+        eff = player[this.layer].points.add(1).pow(0.375)
         if (hasChallenge("t", 11)) eff = eff.times(3.21)
+        if (hasUpgrade('fr', 21)) eff = eff.times(3)
+
+        if (inChallenge("t", 11)) eff = eff.pow(0)
         return eff
         },
 
@@ -603,6 +608,22 @@ addLayer("t", {
             description: "Second nerf on Cookie Time and unlocks two new layers",
             cost: new Decimal(1000),
         },
+        22:{
+            title: "A little more might be needed",
+            description: "Your clues boost your clues",
+            effect() {
+                let eff = player.c.points.pow(0.1).add(1)
+                return eff
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+            unlocked() {if (hasChallenge('t', 11)) return true},
+            cost: new Decimal(2500),
+        },
+        23:{
+            title: "Would a little boost help?",
+            description: "A small but trustworthy 100x boost to question gain and 10x gain to clues gain",
+            cost: new Decimal(5000),
+        },
         31:{
             title: "Ladies and Gentlemen, we got him",
             description: "Cookie Time finally does a boost instead of a nerf",
@@ -641,7 +662,7 @@ addLayer("t", {
         11: {
             name: "Ness is comic?",
             challengeDescription: `No more mystery or theory layers bonuses for the likes of you`,
-            goalDescription:"get 1e7 cryptic clues while in Cookie time:.",
+            goalDescription:"get 1e7 cryptic clues while in Cookie time:",
             rewardDescription:"Theory layer's boost's formula is much more generous",
             canComplete: function() {return player.c.points.gte(1e7)&&hasUpgrade('c', 22)},
             unlocked() {if(hasAchievement('a', 25)) return true}
@@ -723,27 +744,32 @@ addLayer("fo", {
         1: {
             requirementDescription: "2 forums",
             effectDescription: "Join an ARG forum to understand the lore <br> You gain more clues, but also more questions <br> <i>and they do all of this stuff for fun???</i>",
-            done() { return player.fo.points.gte(2) }
+            done() { return player.fo.points.gte(2) },
+            unlocked() {if (hasMilestone('fo', 0)) return true},
         },
         2: {
             requirementDescription: "3 forums",
             effectDescription: "Join a prestige tree forum to understand the game <br> You gain more questions, and also more mysteries <br> <i>Oh. so I <b>had</b> to reset to start the game??</i>",
-            done() { return player.fo.points.gte(3) }
+            done() { return player.fo.points.gte(3) },
+            unlocked() {if (hasMilestone('fo', 1)) return true},
         },
         3: {
             requirementDescription: "4 forums",
             effectDescription: "Join an incremental game forum to understand math <br> Keep Mystery challenges on 3rd layer reset <br> <i>What does QoL means? Quarry of Limes? Questions on Lost?</i>",
-            done() { return player.fo.points.gte(4) }
+            done() { return player.fo.points.gte(4) },
+            unlocked() {if (hasMilestone('fo', 2)) return true},
         },
         4: {
             requirementDescription: "5 forums",
             effectDescription: "Join an googology forum to understand all those numbers <br> Keep Mystery milestones, and, every upgrade that unlock upgrades or challenges now lightly boosts their respective layers <br> <i>The e was not just a decoration?</i>",
-            done() { return player.fo.points.gte(5) }
+            done() { return player.fo.points.gte(5) },
+            unlocked() {if (hasMilestone('fo', 3)) return true},
         },
         5: {
             requirementDescription: "6 forums",
             effectDescription: "Join an google + forum to rekindle with your friends <br> You can do friends reset again, but be kind to them <br> <i>I was too harsh on them, I'll need their help too actually</i>",
-            done() { return player.fo.points.gte(6) }
+            done() { return player.fo.points.gte(6) },
+            unlocked() {if (hasMilestone('fo', 4)) return true},
         },
 
         
@@ -772,7 +798,7 @@ addLayer("fr", {
                                                 // Also the amount required to unlock the layer.
 
     type: "normal",                             // Determines the formula used for calculating prestige currency.
-    exponent: 0.25,                             // "normal" prestige gain is (currency^exponent).
+    exponent: 0.4,                             // "normal" prestige gain is (currency^exponent).
 
     gainMult() {                                // Returns your multiplier to your gain of the prestige resource.
         let mult = new Decimal(1)               // Factor in any bonuses multiplying gain here.
@@ -818,44 +844,60 @@ addLayer("fr", {
             description: "Theory gain is multiplied by 1e400",
             cost: new Decimal(1),
             unlocked() {if (player.fr.unlocked) return false
-            else return true},
+                if(player.fo.unlocked) return true
+                else return false},
         },
         12:{
             title: "We missed you so much",
             description: "Mystery gain is boosted by 2eeee4",
             cost: new Decimal(1),
             unlocked() {if (player.fr.unlocked) return false
-                else return true},
+                if(player.fo.unlocked) return true
+                else return false},
         },
         13:{
             title: "We love you so much",
             description: "clue gain is put to the power of 1e100",
             cost: new Decimal(1),
             unlocked() {if (player.fr.unlocked) return false
-                else return true},
+                if(player.fo.unlocked) return true
+                else return false},
         },
         14:{
             title: "come here pal",
             description: "question are put to infinity",
             cost: new Decimal(1),
-            unlocked() {if (player.fr.unlocked ) return false
-                else return true},
+            unlocked() {if (player.fr.unlocked) return false
+                if(player.fo.unlocked) return true
+                else return false},
         },
         15:{
             title: "it s all gonna be fine",
             description: "you win now do it now",
             cost: new Decimal(1),
             unlocked() {if (player.fr.unlocked) return false
-                else return true},
+                if(player.fo.unlocked) return true
+                else return false},
         },
         16:{
             title: "come here we said.",
             description: "do it now you coward reset.",
             cost: new Decimal(1),
             unlocked() {if (player.fr.unlocked) return false
-                else return true},
+                if(player.fo.unlocked) return true
+                else return false},
         },
-        
+        21:{
+            title: "Charlie",
+            description: "boosts mystery and theory effect by 3x",
+            cost: new Decimal(1),
+        },
+        22:{
+            title: "Orlan",
+            description: "Unlocks Forum layer's effect. What do you mean that's useless?",
+            cost: new Decimal(5),
+            unlocked() {return (hasUpgrade('fr', 21))},
+        },
 
     },
     

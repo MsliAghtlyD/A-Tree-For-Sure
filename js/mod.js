@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0425",
+	num: "0.04251",
 	name: "A beginning",
 }
 
@@ -88,7 +88,10 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Put some achievements here and there and did the groundwork for friend layer<br>
 		- Corrected a few typos<br>
 		- Corrected a few bugs<br>
-		- Created a lot more<br><br>`
+		- Created a lot more<br><br>
+	<h3>v0.04251</h3><br>
+		- Rebalanced end of theory layer
+		- Added two new upgrades`
 	
 
 	
@@ -122,6 +125,7 @@ function getPointGen() {
 	if (player.t.unlocked) gain = gain.times(tmp["t"].effect)
 	if (hasMilestone('fo', 1)) gain = gain.pow(1.2)
 	if (hasMilestone('fo', 2)) gain = gain.pow(1.25)
+	if (hasUpgrade('t', 23)) gain = gain.times(100)
 	if (inChallenge('d', 11)) gain = gain.pow(0.1)
 	if (inChallenge('m',11)) gain = gain.pow(0.8)
 	if (inChallenge('m',13)) gain = gain.pow(0.5)
