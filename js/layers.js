@@ -32,7 +32,7 @@ addLayer("c", {
         if (player.m.unlocked) mult = mult.times(temp["m"].effect)
         if (inChallenge('m',12 )) mult = mult.pow(0.5)
         if (inChallenge('m',13 )) mult = mult.pow(0.5)
-        if (hasMilestone('fo', 0)) mult = mult.times(2.5)
+        if (hasMilestone('fo', 0)) mult = mult.times(5)
         if (hasMilestone('fo', 1)) mult = mult.pow(1.25)
         if (hasUpgrade('t', 22)) mult = mult.times(upgradeEffect('t', 22)) 
         if (hasUpgrade("t", 23)) mult = mult.times(10)       
@@ -161,8 +161,8 @@ addLayer("c", {
             description: "Unlock another mystery challenge",
             cost: new Decimal(1e10),
             unlocked() {
-                if(inChallenge('m', 12)) return false
-                else if (hasAchievement('a', 14)) if (hasUpgrade('c', 21)) return true},
+                if (inChallenge('m', 12)) return false
+                if (hasAchievement('a', 14)) if (hasUpgrade('c', 21)) return true},
         },
         25:{
             title: "That's the...",
@@ -174,7 +174,8 @@ addLayer("c", {
             title: "...next layer over there?",
             description: "Unlock more content",
             cost: new Decimal(1e9),
-            unlocked() {if (hasChallenge('m', 12) && (hasUpgrade('c', 21))) return true},
+            unlocked() {if (hasChallenge('m', 12) && (hasUpgrade('c', 21))) return true
+                        if (player.fo.unlocked ||player.fr.unlocked) if (hasUpgrade('c', 21)) return true},
         },
         31:{
             title: "No. No it's not.",
@@ -622,6 +623,7 @@ addLayer("t", {
         23:{
             title: "Would a little boost help?",
             description: "A small but trustworthy 100x boost to question gain and 10x gain to clues gain",
+            unlocked() {if (hasUpgrade('t', 22)) return true},
             cost: new Decimal(5000),
         },
         31:{
@@ -891,6 +893,8 @@ addLayer("fr", {
             title: "Charlie",
             description: "boosts mystery and theory effect by 3x",
             cost: new Decimal(1),
+            unlocked() {if (hasAchievement("a", 26) && !player.fr.unlocked) return false
+                else return true}
         },
         22:{
             title: "Orlan",
