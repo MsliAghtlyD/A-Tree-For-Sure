@@ -47,7 +47,7 @@ addLayer("c", {
         let pg = new Decimal(0)
         if (hasChallenge('m', 13)) pg = pg.add(1)
         if (hasUpgrade('c', 31 )) pg = pg.times(upgradeEffect('c', 31))
-        if (hasAchievement('a', 37)) pg = pg.times(upgradeEffect('c', 31)).times(0.1)
+        if (hasAchievement('a', 37)) pg = pg.times(upgradeEffect('c', 31)).times(0.1).add(1)
         return pg
     },
     
