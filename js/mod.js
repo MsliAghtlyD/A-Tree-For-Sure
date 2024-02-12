@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.04251",
+	num: "0.045",
 	name: "A beginning",
 }
 
@@ -84,14 +84,22 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Being able to 3rd layer reset is not the endgame anymore<br>
 		- Started filling the forum layer<br>
 		- Friends layer is now mostly empty so you cannot reset it first (for now)<br>
-		- Found out howw to hide a layer until a specific upgrade is bought (definitely did'nt take me more than five days)<br>
+		- Found out how to hide a layer until a specific upgrade is bought (definitely did'nt take me more than five days)<br>
 		- Put some achievements here and there and did the groundwork for friend layer<br>
 		- Corrected a few typos<br>
 		- Corrected a few bugs<br>
 		- Created a lot more<br><br>
 	<h3>v0.04251</h3><br>
-		- Rebalanced end of theory layer
-		- Added two new upgrades`
+		- Rebalanced end of theory layer<br>
+		- Added two new upgrades<br><br>
+	<h3>v0.045</h3><br>
+		- You can now choose to start with the friends path<br>
+		- Started filling the friends layer<br>
+		- Added some upgrades, a new buyable, here and there<br>
+		- You cannot continue playing after unlocking the other choice though<br>
+		- Corrected a few typos<br>
+		- Corrected a few bugs<br>
+		- Created a lot more<br><br>`
 	
 
 	
@@ -140,12 +148,13 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: being able to 3rd layer reset"},
+	function(){return"Current endgame: being able to do two different 3rd layer reset"},
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return (player.fr.unlocked)
+	if (player.fr.unlocked) if (hasAchievement('a', 26)) return true
+	if (player.fo.unlocked) if (hasAchievement('a', 27)) return true
 }
 
 

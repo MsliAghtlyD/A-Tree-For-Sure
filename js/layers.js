@@ -30,8 +30,6 @@ addLayer("c", {
         if (hasChallenge('m', 12)) mult = mult.add(90)
         if (hasUpgrade('c', 14)) mult = mult.times(upgradeEffect('c', 14))
         if (player.m.unlocked) mult = mult.times(temp["m"].effect)
-        if (inChallenge('m',12 )) mult = mult.pow(0.5)
-        if (inChallenge('m',13 )) mult = mult.pow(0.5)
         if (hasMilestone('fo', 0)) mult = mult.times(5)
         if (hasMilestone('fo', 1)) mult = mult.pow(1.25)
         if (hasUpgrade('t', 22)) mult = mult.times(upgradeEffect('t', 22)) 
@@ -40,6 +38,10 @@ addLayer("c", {
         if (hasMilestone('fo', 4) && hasUpgrade("c", 24)) mult = mult.times(1.5)
         if (hasMilestone('fo', 4) && hasUpgrade("c", 25)) mult = mult.times(1.5)
         if (hasMilestone('fo', 4) && hasUpgrade("c", 26)) mult = mult.times(1.5)
+     //   if (hasUpgrade("m", 31)) mult = mult.pow(2)
+
+        if (inChallenge('m',12 )) mult = mult.pow(0.5)
+        if (inChallenge('m',13 )) mult = mult.pow(0.5)
         return mult
     },
 
@@ -48,11 +50,15 @@ addLayer("c", {
         if (hasChallenge('m', 13)) pg = pg.add(1)
         if (hasUpgrade('c', 31 )) pg = pg.times(upgradeEffect('c', 31))
         if (hasAchievement('a', 37)) pg = pg.times(upgradeEffect('c', 31)).times(0.1).add(1)
+        if (pg ==0) return false 
         return pg
     },
     
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        let exp = new Decimal(1)
+     //   if (hasUpgrade("m", 31)) exp = exp.add(1)
+        return exp
+
     },
 
     row: 0, // Row the layer is in on the tree (0 is the first row)
@@ -81,9 +87,12 @@ addLayer("c", {
             cost: new Decimal(10),
             unlocked() {if (hasUpgrade('c', 12)) return true},
             effect() {
+                let softlim = new Decimal ("1e15")
+                if (hasUpgrade('m', 31)) softlim = softlim.pow(2)
                 let eff= player[this.layer].points.add(1).pow(0.5)
-                if(hasUpgrade('c',15)) eff=eff.times(upgradeEffect('c', 15))
-                softeff = softcap(eff, new Decimal("e15"), new Decimal(0.1))
+                if(hasUpgrade('c',15)) eff = eff.times(upgradeEffect('c', 15))
+                if(hasUpgrade('fr', 22)) eff = eff.times(upgradeEffect('fr', 22))
+                softeff = softcap(eff, softlim, new Decimal(0.3))
                 return softeff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
@@ -94,7 +103,9 @@ addLayer("c", {
             cost: new Decimal(25),
             unlocked() {if (hasUpgrade('c', 13)) return true},
             effect() {
-                return player.points.add(1).pow(0.15)
+                let eff = player.points.add(1).pow(0.15)
+                if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
+                return eff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -102,12 +113,14 @@ addLayer("c", {
             title: "...back to the previous layer",
             description: "Boost questions based on clues by boosting third upgrade",
             cost: new Decimal(50),
-            unlocked() {
-                if (hasUpgrade('m', 11)) if(hasUpgrade('c', 14)) return true
+            unlocked() {if (hasUpgrade('m', 11)) if(hasUpgrade('c', 14)) return true
                 if (player.fo.unlocked ||player.fr.unlocked) if (hasUpgrade("c", 14)) return true},
             effect() {
+                let softlim = new Decimal ("1e6")
+                if (hasUpgrade('m', 31)) softlim = softlim.pow(2)
                 let eff = player[this.layer].points.add(1).pow(0.35)
-                softeff = softcap(eff, new Decimal("e6"), new Decimal(0.7))
+                if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
+                softeff = softcap(eff, softlim, new Decimal(0.7))
                 return softeff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
@@ -118,8 +131,11 @@ addLayer("c", {
             cost: new Decimal(250),
             unlocked() {if (hasUpgrade('c', 15)) return true},
             effect() {
-                let eff = player.points.add(1).pow(0.26)
-                softeff = softcap(eff, new Decimal("2e6"), new Decimal(0.25))
+                let softlim = new Decimal ("2e6")
+                if (hasUpgrade('m', 31)) softlim = softlim.pow(2)
+                let eff = player.points.add(1).pow(0.26)                
+                if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
+                softeff = softcap(eff, softlim, new Decimal(0.25))
                 return softeff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
@@ -138,7 +154,7 @@ addLayer("c", {
                 let eff = new Decimal (0.1)
                 if(hasUpgrade('t', 11)) eff = eff.times(2.5)
                 if(hasUpgrade('t', 21)) eff = eff.times(2)
-                if(hasUpgrade('t', 31)) eff = eff.times(2.5)
+                if(hasUpgrade('t', 51)) eff = eff.times(2.5)
                 return eff
             },
             onPurchase() { 
@@ -181,13 +197,16 @@ addLayer("c", {
             title: "No. No it's not.",
             description: "Unlock another mystery challenge <br> And get a boost on passive clue gain based on clue upgrades bought",
             cost: new Decimal(1e12),
-            unlocked() {if (hasUpgrade('c', 26)) if(hasChallenge('m', 13)) return true},
+            unlocked() {if (hasUpgrade('c', 26)) if(hasChallenge('m', 13)) return true
+            if (player.fo.unlocked ||player.fr.unlocked) if (hasUpgrade('c', 26)) return true},
             effect() {
                 let eff = new Decimal ("1.69")
                 eff = eff.pow(player[this.layer].upgrades.length).add(1)
+                if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
                 if (hasUpgrade('t', 12)) return eff
                 eff = new Decimal (player[this.layer].upgrades.length)
                 eff = eff.add(1)
+                if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
                 return eff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
@@ -246,7 +265,7 @@ addLayer("m", {
         let qEff = player.m.total.pow(0.6725).plus(1)
         eff = eff.times(qEff)
         if (hasMilestone("fo", 4)) eff = eff.times(ueff)
-        if (hasUpgrade('fr', 21)) eff = eff.times(3)
+        if (hasUpgrade('fr', 21)) eff = eff.times(5)
         if (inChallenge("t", 11)) eff= eff.pow(0)
         return eff
         },
@@ -263,9 +282,11 @@ addLayer("m", {
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         let price= new Decimal(1)               // Factor in any bonuses multiplying gain here.
-        if (player.m.points.gte(4)) price = price.times(1e10)
+        if (hasUpgrade('t', 32)) price = price.times(0.00001)
+        else if (player.m.points.gte(4)) price = price.times(1e10)
         if (hasUpgrade('m', 13)) price = price.times(0.01)
         if (hasMilestone('fo', 2)) price = price.times(0.001)
+
         return price
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
@@ -290,11 +311,13 @@ addLayer("m", {
             description: "Boost questions based on questions",
             cost: new Decimal(4),
             unlocked() {if (hasUpgrade('c', 22)) return true
-                        else if (hasUpgrade('m', 12)) return true
-                        else if (player.fr.unlocked || player.fo.unlocked) return true
+                        if (hasUpgrade('m', 12)) return true
+                        if (hasChallenge('m', 11)) return true
+                        if (player.fr.unlocked || player.fo.unlocked) return true
                     },
             effect() {
                 let eff= player.points.add(1).pow(0.05)
+                if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
                 return eff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
@@ -305,6 +328,20 @@ addLayer("m", {
             cost: new Decimal(4),
             unlocked() {if (hasChallenge('m', 11)) if (hasUpgrade('m', 12)) return true
                         if (player.fr.unlocked || player.fo.unlocked) return true},
+        },
+        14:{
+            title: "Can you ever afk here?",
+            description: "Gain a modest passive 0.001% of friends on reset every second <br><i>Courtesy of Orlan</i>",
+            cost: new Decimal(29),
+            unlocked() {if (hasUpgrade('m', 13)) if (hasUpgrade('fr', 25)) return true},
+            tooltip: "Next one will be on Theory layer",
+        },
+        31:{
+            title: "I had to come back here again?",
+            description: "The start of clue upgrades' softcap gets squared",
+            cost: new Decimal(37),
+            unlocked() {if (hasUpgrade('m', 14)) return true},
+            tooltip: "Next one will be on Theory layer",
         },
     },
 
@@ -556,10 +593,16 @@ addLayer("t", {
     },
     branches: [["c", 0]],
 
+    doReset(resettingLayer) {
+        let keep = [];
+            if (hasUpgrade('fr', 24)) keep.push("challenges")
+            if (layers[resettingLayer].row > this.row) layerDataReset("t", keep)
+    },
+
     effect() {
         eff = player[this.layer].points.add(1).pow(0.375)
         if (hasChallenge("t", 11)) eff = eff.times(3.21)
-        if (hasUpgrade('fr', 21)) eff = eff.times(3)
+        if (hasUpgrade('fr', 21)) eff = eff.times(5)
 
         if (inChallenge("t", 11)) eff = eff.pow(0)
         return eff
@@ -614,6 +657,7 @@ addLayer("t", {
             description: "Your clues boost your clues",
             effect() {
                 let eff = player.c.points.pow(0.1).add(1)
+                if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
                 return eff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
@@ -627,9 +671,27 @@ addLayer("t", {
             cost: new Decimal(5000),
         },
         31:{
+            title: "A new theory",
+            description: "Unlocks a new buyable",
+            unlocked() {if (hasUpgrade('m', 14)) return true},
+            cost: new Decimal(1e12),
+        },
+        32:{
+            title: "It's like you're never gonna figure out those clues",
+            description: "Mysteries just keep on coming<br>Finally completely annihilate the jump in cost at 4 mysteries",
+            unlocked() {if (hasUpgrade('t', 31)) return true},
+            cost: new Decimal(1e17),
+        },
+        33:{
+            title: "Is it finally grinding time?",
+            description: "Double Friends gain",
+            unlocked() {if (hasUpgrade('m', 31)) return true},
+            cost: new Decimal(1e30),
+        },
+        51:{
             title: "Ladies and Gentlemen, we got him",
             description: "Cookie Time finally does a boost instead of a nerf",
-            cost: new Decimal(1e110),
+            cost: new Decimal(1e308),
         },
 
     },
@@ -639,6 +701,7 @@ addLayer("t", {
             unlocked() { return hasUpgrade("t", 13) },
             cost(x) {
                 let base= new Decimal (5)
+                base = base.add(buyableEffect("t", 12))
                 return new Decimal(5).mul(base.pow(x)).floor()
             },
             display() {
@@ -652,10 +715,50 @@ addLayer("t", {
                 player[this.layer].points = player[this.layer].points.sub(this.cost().mul(cost))
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
+            tooltip() { 
+                let softcap = new Decimal ("1e15")
+                let push = new Decimal ("1e5")
+                push = push.pow(buyableEffect("t", 12))
+                softcap = softcap.times(push)
+                return"Will definitely get softcapped past x"+softcap
+        
+            },
             effect(x) {
+                let softlim = new Decimal ("1e15")
+                let push = new Decimal ("1e5")
+                push = push.pow(buyableEffect("t", 12))
+                softlim = softlim.times(push)
                 let base1 = new Decimal(3)
                 let base2 = x
+                base1 = base1.add(buyableEffect("t", 12))
                 let eff = base1.pow(base2)
+                softeff = softcap(eff, softlim, new Decimal(0.25))
+                return softeff
+            },
+        },
+        12: {
+            title: "They're insane and it's all in their head?",
+            unlocked() { return hasUpgrade("t", 31) },
+            cost(x) {
+                let base= new Decimal (1e12)
+                return new Decimal(1e12).mul(base.pow(x)).floor()
+            },
+            display() {
+                return "Cost: " + format(tmp[this.layer].buyables[this.id].cost) + " theories" + "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "<br>Effect: Boost first buyable's effect and cost per purchase's base by +" + format(buyableEffect(this.layer, this.id)) + "<br>And also pushes back its softcap by 1e5<br>Although this will reset the first buyable's level"
+            },
+            canAfford() {
+                return player[this.layer].points.gte(this.cost())
+            },
+            buy() {
+                let cost = new Decimal (1)
+                player[this.layer].points = player[this.layer].points.sub(this.cost().mul(cost))
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                setBuyableAmount(this.layer, 11, getBuyableAmount(this.layer, 11).times(0))
+            },
+            effect(x) {
+                let base1 = new Decimal(0)
+                let base2 = x
+                let eff = base1.add(base2)
                 return eff
             },
         },
@@ -690,7 +793,9 @@ addLayer("fo", {
     baseResource: "cryptic clues",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.c.points },  // A function to return the current amount of baseResource.
 
-    requires: new Decimal(1e16),              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires(){let req = new Decimal(1e16) 
+                if (hasAchievement('a', 27)) req = req.pow(2) 
+                return req},              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
     type: "static",                         // Determines the formula used for calculating prestige currency.
@@ -698,10 +803,12 @@ addLayer("fo", {
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         let mult = new Decimal(1)               // Factor in any bonuses multiplying gain here.
+        if (hasAchievement('a', 27)) mult = mult.times(2)
         return mult                                       
     },
     gainExp() {                             // Returns your exponent to your gain of the prestige resource.
         let mult = new Decimal(0.25)
+        if (hasAchievement('a', 27)) mult = mult.pow(20) 
         return mult
     },
     branches: [["t", 1]],
@@ -720,8 +827,8 @@ addLayer("fo", {
     },
 
     canReset() {
-        if (!hasUpgrade('c', 32)) return false
-        if (player.c.points.gte(temp.fo.nextAt)) return true
+        if (player.fr.unlocked) if (!hasUpgrade('fr', 26)) return false
+        if (player.c.points.gte(temp.fo.nextAt)) if (hasUpgrade('c', 32)) return true
         return false
         
     },
@@ -733,6 +840,7 @@ addLayer("fo", {
     ],
 
     layerShown() { 
+        if (hasUpgrade("fr", 26)) return true
         if (hasAchievement('a', 27) && !hasAchievement('a', 31)) return false
         if (hasUpgrade('t', 21) )return true 
         else if (player.fo.best.gte(1)) return true},            // Returns a bool for if this layer's node should be visible in the tree.
@@ -796,7 +904,9 @@ addLayer("fr", {
     baseResource: "cryptic clues",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.c.points },       // A function to return the current amount of baseResource.
 
-    requires: new Decimal(1e16),                // The amount of the base needed to  gain 1 of the prestige currency.
+    requires(){let req = new Decimal(1e16) 
+        if (hasAchievement('a', 26)) req = req.times(1e7) 
+        return req},                // The amount of the base needed to  gain 1 of the prestige currency.
                                                 // Also the amount required to unlock the layer.
 
     type: "normal",                             // Determines the formula used for calculating prestige currency.
@@ -804,6 +914,7 @@ addLayer("fr", {
 
     gainMult() {                                // Returns your multiplier to your gain of the prestige resource.
         let mult = new Decimal(1)               // Factor in any bonuses multiplying gain here.
+        if (hasUpgrade('t', 33)) mult = mult.times(2)
         return mult                                       
     },
     gainExp() {                                 // Returns your exponent to your gain of the prestige resource.
@@ -823,9 +934,8 @@ addLayer("fr", {
     },
 
     canReset() {
-        if (!player.fo.unlocked) return false
         if (player.fo.unlocked) if(!hasMilestone('fo', 5)) return false
-        if (player.c.points.gte(1e16)) if(hasUpgrade("c", 32)) return true
+        if (player.c.points.gte(temp.fr.requires)) if(hasUpgrade("c", 32)) return true
         return false
 
     },
@@ -833,6 +943,14 @@ addLayer("fr", {
     hotkeys: [
         {key: "F", description: "Shift + f: Reset for Friends", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
+
+    passiveGeneration(){
+        let pg = new Decimal(0)
+        if (hasUpgrade('m', 14)) pg = pg.add(0.00001)
+        if (pg ==0) return false 
+        if (!temp.fr.canReset) return false
+        else return pg
+    },
 
     layerShown() { 
         if (hasMilestone('fo', 5)) return true
@@ -891,16 +1009,50 @@ addLayer("fr", {
         },
         21:{
             title: "Charlie",
-            description: "boosts mystery and theory effect by 3x",
+            description: "Boosts mystery and theory effect by 5x",
             cost: new Decimal(1),
             unlocked() {if (hasAchievement("a", 26) && !player.fr.unlocked) return false
                 else return true}
         },
         22:{
-            title: "Orlan",
-            description: "Unlocks Forum layer's effect. What do you mean that's useless?",
+            title: "Hector",
+            description: "Boosts every upgrade based on number of current friends and bought friends upgrades",
             cost: new Decimal(5),
+            effect() {
+                let eff = new Decimal (player.fr.upgrades.length)
+                eff = eff.times(player.fr.points.pow(0.5).add(1))
+                softeff = softcap(eff, new Decimal("2e5"), new Decimal(0.25))
+                return softeff
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             unlocked() {return (hasUpgrade('fr', 21))},
+            tooltip: "But do not work on future upgrades",
+        },
+        23:{
+            title: "Orlan",
+            description() {if (player.fo.unlocked) return "Unlocks Forum layer's effect. What do you mean that's... not that bad<br><i>God damn it Orlan, you've improved</i>"
+                else return"Unlocks Forum layer's effect. What do you mean that's useless?<br><i>God damn it Orlan</i>"},
+            cost: new Decimal(5),
+            unlocked() {return (hasUpgrade('fr', 22))},
+        },
+        24:{
+            title: "Orlan",
+            description: "Keep theory challenge on 3rd layer reset. That's still not very useful<br><i>God damn it Orlan, and you're getting expensive too</i>",
+            cost: new Decimal(250),
+            unlocked() {return (hasUpgrade('fr', 23))},
+            tooltip: "Next upgrade is gonna cost you 1000 friends",
+        },
+        25:{
+            title: "Susie",
+            description: "Unlocks new upgrades here and there<br><i>The S actually stands for New Content</i>",
+            cost: new Decimal(1000),
+            unlocked() {return (hasUpgrade('fr', 24))},
+        },
+        26:{
+            title: "Ethan",
+            description: "Unlock Forum layer again (and ability to reset it)<br><i>He fixed your internet after asking nicely</i>",
+            cost: new Decimal(10000000),
+            unlocked() {return (hasUpgrade('fr', 25))},
         },
 
     },
@@ -1122,13 +1274,13 @@ addLayer("a", {
         },
 
         32: {
-            name: "temp",
+            name: "Back to dating 'e-girls'",
             done() {
 				return (hasAchievement("a", 27) && (player.fo.unlocked))
 			},
-            goalTooltip() {return"temp"},
+            goalTooltip() {return"Get your internet up and running again"},
 
-            doneTooltip() {return"cheater"},
+            doneTooltip() {return"You got an old new layer back, yet you still desire more? Despicable"},
             unlocked() {if (hasAchievement('a', 27)) return true
         },
 
