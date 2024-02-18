@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.045",
+	num: "0.0475",
 	name: "A beginning",
 }
 
@@ -99,6 +99,16 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- You cannot continue playing after unlocking the other choice though<br>
 		- Corrected a few typos<br>
 		- Corrected a few bugs<br>
+		- Created a lot more<br><br>
+	<h3>v0.0475</h3><br>
+		- Friend layer has been continued until Forum acts as chosen first (though forum acting this way has not been coded yet)<br>
+		- Added a challenge, some upgrades and no achievements<br>
+		- Theory upgrades and achievements are automatically resetted to avoid cheating (for the next two or three updates, so beware)<br>
+		- Learned how to edit the display of layers<br>
+		- Learned how to use pop ups<br>
+		- Next time (except if I have to do a patch soon) I'm focusing on the forum layer, and putting the finishing touches on these two layers<br>
+		- Corrected a few typos<br>
+		- Corrected a few bugs<br>
 		- Created a lot more<br><br>`
 	
 
@@ -154,7 +164,7 @@ var displayThings = [
 // Determines when the game "ends"
 function isEndgame() {
 	if (player.fr.unlocked) if (hasAchievement('a', 26)) return true
-	if (player.fo.unlocked) if (hasAchievement('a', 27)) return true
+	if (hasUpgrade('fr', 36)) if (hasAchievement('a', 27)) return true
 }
 
 
@@ -174,4 +184,6 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
+	if (hasAchievement('a', 17)) player.a.achievements = []
+	if (hasUpgrade('t', 11)) player.t.upgrades = []
 }
