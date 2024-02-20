@@ -121,6 +121,7 @@ addLayer("c", {
                 let eff = player[this.layer].points.add(1).pow(0.35)
                 if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
                 softeff = softcap(eff, softlim, new Decimal(0.7))
+                if(hasUpgrade('c',33)) softeff = softeff.times(upgradeEffect('c', 33))
                 return softeff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
@@ -220,10 +221,21 @@ addLayer("c", {
                 if (inChallenge('m', 14)) return false
                 if (hasUpgrade('c', 22)) return true},
         },
+        33:{
+            title: "How long has it been since the last upgrade here?",
+            description: "Boost questions based on clues based on friends by pushing the fifth upgrade's softcap.<br><i>It's starting to be a bit convoluted</i>",
+            cost: new Decimal(1e90),
+            unlocked() {
+            if (hasUpgrade('m', 32)) return false},
+            effect() {
+                let eff = new Decimal (player.fr.points)
+                eff = eff.log(10).pow(5).plus(1)
+                return eff
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
     },
 })
-
-
 
 
 
@@ -267,6 +279,7 @@ addLayer("m", {
         if (hasMilestone("fo", 4)) eff = eff.times(ueff)
         if (hasUpgrade('fr', 21)) eff = eff.times(5)
         if (hasUpgrade('m', 32)) eff = eff.pow(3)
+        eff = eff.times(new Decimal(buyableEffect('t', 21)).pow(2))
         if (inChallenge('t', 11)) eff= eff.pow(0)
         return eff
         },
@@ -404,17 +417,22 @@ addLayer("m", {
         0: {
             requirementDescription: "4 mysteries",
             effectDescription: "No more mysteries. For now",
-            done() { return player.m.points.gte(4) }
+            done() { return player.m.points.gte(4) },
+            unlocked() {if (hasMilestone('m', 0)) return true}
         },
         1: {
             requirementDescription: "Get the third mystery upgrade and 4 mysteries",
             effectDescription: "You can buy max mysteries",
-            done() { return (hasUpgrade('m', 13))&& player.m.points.gte(4) }
+            done() { return (hasUpgrade('m', 13))&& player.m.points.gte(4) },
+            unlocked() {if (hasMilestone('m', 0)) return true
+            if (hasMilestone('m', 1)) return true}
         },
         2: {
             requirementDescription: "4th challenge completed",
             effectDescription: "Keep clue upgrades on mystery resets",
-            done() { return hasChallenge('m', 14) }
+            done() { return hasChallenge('m', 14) },
+            unlocked() {if (hasMilestone('m', 1)) return true
+            if (hasMilestone('m', 2)) return true}
         },
     }
 
@@ -624,6 +642,7 @@ addLayer('t', {
     passiveGeneration(){
         let pg = new Decimal(0)
         if (hasUpgrade('fr', 32)) pg = pg.add(0.1)
+        pg = pg.times(buyableEffect('t', 21))
         if (pg ==0) return false 
         if (!temp.t.canReset) return false
         else return pg
@@ -713,9 +732,11 @@ addLayer('t', {
             unlocked() {if (hasUpgrade('t', 15)) return true
                         if (hasUpgrade('t', 25)) return true},
             cost: new Decimal(5),
+            tooltip: "Will not actually cost you the forums, but you still need to have them for some reason",
             currencyDisplayName: "Forums",
             currencyInternalName: "points",
             currencyLayer: "fo",
+            pay() {return false}
         },
         31:{
             title: "A new theory",
@@ -737,14 +758,15 @@ addLayer('t', {
         },
         35:{
             title: "...upgrades though",
-            description: "Unlock a buyable<br>First level will cost you 5 theories",
+            description: "Unlocks yet another theorem buyable<br><i>The T actually stands for buyable</i>",
             unlocked() {if (hasUpgrade('t', 25)) return true},
-            cost: new Decimal(2e200),
+            tooltip: "Really precise cost for some reason",
+            cost: new Decimal(1.24578954541236541235496957865245e65),
         },
         41:{
             title: "Going back is not easy",
             description: "To help with the forums, unlock a new layer",
-            unlocked() {if (hasUpgrade('fr', 32)) return true},
+            unlocked() {if (hasUpgrade('t', 34)) return true},
             cost: new Decimal(1e55),
         },
         51:{
@@ -821,6 +843,31 @@ addLayer('t', {
                 return eff
             },
         },
+        21: {
+            title: "The hero was actually a bad guy?",
+            unlocked() { return hasUpgrade('t', 35) },
+            cost(x) {
+                let base= new Decimal (1e25)
+                return new Decimal(1e25).mul(base.pow(x)).floor()
+            },
+            display() { let myseff = new Decimal(buyableEffect(this.layer, this.id)).pow(2)
+                return "Cost: " + format(tmp[this.layer].buyables[this.id].cost) + " theories" + "<br>Bought: " + getBuyableAmount(this.layer, this.id) + "<br>Effect: Boost passive theorem generation by x" + format(buyableEffect(this.layer, this.id)) + "<br>Also boosts the mystery layer's effect by x" + myseff
+            },
+            canAfford() {
+                return player[this.layer].points.gte(this.cost())
+            },
+            buy() {
+                let cost = new Decimal (1)
+                player[this.layer].points = player[this.layer].points.sub(this.cost().mul(cost))
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            effect(x) {
+                let base1 = new Decimal(4)
+                let base2 = x
+                let eff = base1.pow(base2)
+                return eff
+            },
+        },
     },
     challenges: {
         11: {
@@ -834,9 +881,9 @@ addLayer('t', {
         12: {
             name: "The characters are<br> actually the seven deadly sins??",
             challengeDescription: `You ate Hector's favourite snack, he's gonna be tired of you for a while`,
-            goalDescription:"get 1e34 cryptic clues while in Cookie time",
+            goalDescription:"get 1e26 cryptic clues while in Cookie time",
             rewardDescription: function() {return `Hector's effect is boosted and its softcap's pushed back. Oh that's<br>not gonna help with future<br>completions.<br>Completions: ${challengeCompletions('t',12)}/5`},            
-            canComplete: function() {return player.points.gte(1e34)&&hasUpgrade('c', 22)},
+            canComplete: function() {return player.points.gte(1e26)&&hasUpgrade('c', 22)},
             completionLimit:5,
             unlocked() {if(hasUpgrade('t', 15)) return true}
         },
@@ -910,6 +957,7 @@ addLayer("fo", {
     ],
 
     layerShown() { 
+        return false
         if (hasUpgrade("fr", 26)) return true
         if (hasAchievement('a', 27) && !hasAchievement('a', 31)) return false
         if (hasUpgrade('t', 21) )return true 
@@ -1042,6 +1090,7 @@ addLayer("fr", {
     },
 
     layerShown() { 
+        return false
         if (hasMilestone('fo', 5)) return true
         if (hasAchievement('a', 26) && !hasAchievement('a', 32)) return false        
         if (hasUpgrade('t', 21) )return true 
@@ -1111,11 +1160,12 @@ addLayer("fr", {
                 let eff = new Decimal (player.fr.upgrades.length)
                 let softlim = new Decimal ("2e5")
                 let powef = new Decimal (0.5)
-                let helpme = new Decimal (0.22)
+                let helpme = new Decimal (0.1)
                 powef = powef.add(helpme.times(challengeCompletions('t',12)))
                 eff = eff.times(player.fr.points.pow(powef).add(1))
-                if(inChallenge('t', 12)) eff = eff.div(eff).div(eff).div(10)
+                if(inChallenge('t', 12)) eff = eff.div(eff).times(eff).times(10)
                 softlim = softlim.times(new Decimal(challengeCompletions('t',12)).add(1))
+                if(inChallenge('t', 12)) eff = eff.div(eff).times(eff)
                 softeff = softcap(eff, new Decimal(softlim), new Decimal(0.25))
                 return softeff
             },
@@ -1167,12 +1217,12 @@ addLayer("fr", {
             cost: new Decimal(16e9),
             unlocked() {return (hasUpgrade('fr', 32))},
         },
-        36:{
-            title: "Ethan",
-            description: "Unlock Forum layer again(?)<br>Forum scaling acts as if you chose it first<br><i>No flavour texts here, keep going</i>",
-            cost: new Decimal(16e9),
-            unlocked() {return (hasUpgrade('fr', 33))},
-        },
+        //36:{
+        //    title: "Ethan",
+        //    description: "Unlock Forum layer again(?)<br>Forum scaling acts as if you chose it first<br><i>No flavour texts here, keep going</i>",
+        //    cost: new Decimal(16e9),
+        //    unlocked() {return (hasUpgrade('fr', 33))},
+        //},
 
     },
     
@@ -1411,8 +1461,6 @@ addLayer("a", {
             goalTooltip() {return"Get everybody in the whole wide world to be your buddy"},
 
             doneTooltip() {return"There is no more friends to be found<br>Reward : Orlan"},
-            unlocked() {if (hasAchievement('a', 33)) return true
-        },
         },
 
         39: {
