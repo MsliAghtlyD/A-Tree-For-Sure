@@ -266,6 +266,7 @@ addLayer("m", {
         eff = eff.times(qEff)
         if (hasMilestone("fo", 4)) eff = eff.times(ueff)
         if (hasUpgrade('fr', 21)) eff = eff.times(5)
+        if (hasUpgrade('m', 32)) eff = eff.pow(3)
         if (inChallenge('t', 11)) eff= eff.pow(0)
         return eff
         },
@@ -343,6 +344,13 @@ addLayer("m", {
             description: "The start of clue upgrades' softcap gets squared",
             cost: new Decimal(37),
             unlocked() {if (hasUpgrade('t', 32)) return true},
+            tooltip: "Next one will be on Theory layer",
+        },
+        32:{
+            title: "That looks a bit pricey",
+            description: "Mystery effect finally gets good",
+            cost: new Decimal(185),
+            unlocked() {if (hasUpgrade('m', 31)) return true},
             tooltip: "Next one will be on Theory layer",
         },
     },
@@ -826,7 +834,7 @@ addLayer('t', {
         12: {
             name: "The characters are<br> actually the seven deadly sins??",
             challengeDescription: `You ate Hector's favourite snack, he's gonna be tired of you for a while`,
-            goalDescription:"get 1e36 cryptic clues while in Cookie time",
+            goalDescription:"get 1e34 cryptic clues while in Cookie time",
             rewardDescription: function() {return `Hector's effect is boosted and its softcap's pushed back. Oh that's<br>not gonna help with future<br>completions.<br>Completions: ${challengeCompletions('t',12)}/5`},            
             canComplete: function() {return player.points.gte(1e34)&&hasUpgrade('c', 22)},
             completionLimit:5,
