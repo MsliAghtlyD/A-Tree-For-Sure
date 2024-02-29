@@ -702,7 +702,6 @@ addLayer('t', {
         let keep = [];
             if (hasUpgrade('fr', 33)) keep.push("upgrades")
             if (layers[resettingLayer].row > this.row) layerDataReset('t', keep)
-            player.t.upgrades.push(...holdonu) 
         for (const [id, completions] of Object.entries(keptChallenges)) {
             player[this.layer].challenges[id] = completions;
             }
