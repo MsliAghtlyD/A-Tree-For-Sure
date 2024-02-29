@@ -7,7 +7,7 @@ function hasMilestone(layer, id) {
 }
 
 function hasAchievement(layer, id) {
-	return ((player[layer].achievements.includes(toNumber(id)) || player[layer].achievements.includes(id.toString())) && !tmp[layer].deactivated)
+	return ((player[layer].achievements.includes(toNumber(id)) || player[layer].achievements.includes(id.toString())) )
 }
 
 function hasChallenge(layer, id) {
