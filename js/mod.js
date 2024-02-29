@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0475",
+	num: "0.0499",
 	name: "A beginning",
 }
 
@@ -109,12 +109,23 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Next time (except if I have to do a patch soon) I'm focusing on the forum layer, and putting the finishing touches on these two layers<br>
 		- Corrected a few typos<br>
 		- Corrected a few bugs<br>
+		- Created a lot more<br><br>
+	<h3>v0.0499</h3><br>
+		- Forum layer has been continued until Friends acts as chosen first<br>
+		- Added some upgrades and achievements<br>
+		- Theory upgrades and achievements are automatically resetted to avoid cheating (for the next one or two updates, so beware)<br>
+		- Friends and Forum can now act as if chosen first, even if they were not<br>
+		- Had the idea of not being v0.05 because I'm sure I'll need to patch things up<br>
+		- Finishing touches have been made on the Forum / friends layer, I'll code what comes next this week or the next<br>
+		- I had to Lock down Forum and Friends layers since v0.0475 because I changes some prices and order of upgrades and was scared I'd have to reset the progress. So now it's not hidden anymore
+		- Corrected a few typos<br>
+		- Corrected a few bugs<br>
 		- Created a lot more<br><br>`
 	
 
 	
 
-let winText = `Congratulations! You have reached the end and beaten this game, now wait for a game breaking upgrade that requires you to reset everything`
+let winText = `Congratulations! You have reached the end and beaten this game, now wait for a game breaking upgrade that requires you to reset everything !`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -144,6 +155,7 @@ function getPointGen() {
 	if (hasMilestone('fo', 1)) gain = gain.pow(1.2)
 	if (hasMilestone('fo', 2)) gain = gain.pow(1.25)
 	if (hasUpgrade('t', 23)) gain = gain.times(100)
+
 	if (inChallenge('d', 11)) gain = gain.pow(0.1)
 	if (inChallenge('m',11)) gain = gain.pow(0.8)
 	if (inChallenge('m',13)) gain = gain.pow(0.5)
@@ -158,13 +170,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: being able to do two different 3rd layer reset"},
+	function(){return"Current endgame: 35 forums' upgrade"},
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	if (player.fr.unlocked) if (hasAchievement('a', 26)) return true
-	if (hasUpgrade('fr', 36)) if (hasAchievement('a', 27)) return true
+	if (hasUpgrade('fo',14)) return true
 }
 
 
@@ -184,6 +195,10 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
-	if (hasAchievement('a', 17)) player.a.achievements = []
+	if (hasAchievement('a', 31)) player.fr.upgrades = []
+	if (hasAchievement('a', 31)) player.fr.points = new Decimal(0)
+	if (hasAchievement('a', 17) && hasAchievement("a", 27)) player.a.achievements = ["27"]
+	else if (hasAchievement('a', 17) && hasAchievement("a", 26)) player.a.achievements = ["26"]
+	else if (hasAchievement('a', 17)) player.a.achievements = []
 	if (hasUpgrade('t', 11)) player.t.upgrades = []
 }
