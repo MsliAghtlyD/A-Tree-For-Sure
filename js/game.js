@@ -391,6 +391,9 @@ function hardReset(resetOptions) {
 	window.location.reload();
 }
 
+var controlDown = false
+var shiftDown = false
+
 var ticking = false
 
 var interval = setInterval(function() {
@@ -412,6 +415,8 @@ var interval = setInterval(function() {
 	}
 	if (player.devSpeed) diff *= player.devSpeed
 	player.time = now
+	player.shiftin = shiftDown
+	player.controlin = controlDown
 	if (needCanvasUpdate){ resizeCanvas();
 		needCanvasUpdate = false;
 	}

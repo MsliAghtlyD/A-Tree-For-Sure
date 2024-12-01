@@ -7,7 +7,7 @@ function hasMilestone(layer, id) {
 }
 
 function hasAchievement(layer, id) {
-	return ((player[layer].achievements.includes(toNumber(id)) || player[layer].achievements.includes(id.toString())) )
+	return ((player[layer].achievements.includes(toNumber(id)) || player[layer].achievements.includes(id.toString())) && !tmp[layer].deactivated)
 }
 
 function hasChallenge(layer, id) {
@@ -52,6 +52,10 @@ function setGridData(layer, id, data) {
 
 function upgradeEffect(layer, id) {
 	return (tmp[layer].upgrades[id].effect)
+}
+
+function upgradeRepare(layer, id) {
+	return (tmp[layer].upgrades[id].repare)
 }
 
 function challengeEffect(layer, id) {

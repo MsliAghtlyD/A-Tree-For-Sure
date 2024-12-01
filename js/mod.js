@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0499",
+	num: "0.04997",
 	name: "A beginning",
 }
 
@@ -86,7 +86,7 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Friends layer is now mostly empty so you cannot reset it first (for now)<br>
 		- Found out how to hide a layer until a specific upgrade is bought (definitely did'nt take me more than five days)<br>
 		- Put some achievements here and there and did the groundwork for friend layer<br>
-		- Corrected a few typos<br>
+		- Corrected a few typso<br>
 		- Corrected a few bugs<br>
 		- Created a lot more<br><br>
 	<h3>v0.04251</h3><br>
@@ -97,7 +97,7 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Started filling the friends layer<br>
 		- Added some upgrades, a new buyable, here and there<br>
 		- You cannot continue playing after unlocking the other choice though<br>
-		- Corrected a few typos<br>
+		- Corrected a few typso<br>
 		- Corrected a few bugs<br>
 		- Created a lot more<br><br>
 	<h3>v0.0475</h3><br>
@@ -107,7 +107,7 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Learned how to edit the display of layers<br>
 		- Learned how to use pop ups<br>
 		- Next time (except if I have to do a patch soon) I'm focusing on the forum layer, and putting the finishing touches on these two layers<br>
-		- Corrected a few typos<br>
+		- Corrected a few typso<br>
 		- Corrected a few bugs<br>
 		- Created a lot more<br><br>
 	<h3>v0.0499</h3><br>
@@ -117,8 +117,21 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Friends and Forum can now act as if chosen first, even if they were not<br>
 		- Had the idea of not being v0.05 because I'm sure I'll need to patch things up<br>
 		- Finishing touches have been made on the Forum / friends layer, I'll code what comes next this week or the next<br>
-		- I had to Lock down Forum and Friends layers since v0.0475 because I changes some prices and order of upgrades and was scared I'd have to reset the progress. So now it's not hidden anymore
-		- Corrected a few typos<br>
+		- I had to Lock down Forum and Friends layers since v0.0475 because I changes some prices and order of upgrades and was scared I'd have to reset the progress. So now it's not hidden anymore<br>
+		- Corrected a few typso<br>
+		- Corrected a few bugs<br>
+		- Created a lot more<br><br>
+	<h3>v0.04995</h3><br>
+		- You can now enter mystery challenges again<br><br>
+	<h3>v0.04997</h3><br>
+		- Well it's been more like almost a year actually<br>
+		- The code has been somewhat optimised, or at least, I think so<br>
+		- Added a few upgrades and achievements<br>
+		- No more resetting theory upgrades or related achievements but secret achievements have been rolled back<br>
+		- The endgame has been pushed back a very little bit<br>
+		- Groundwork for the next layer has been set<br>
+		- Added some achievements features<br>
+		- Corrected a few typso<br>
 		- Corrected a few bugs<br>
 		- Created a lot more<br><br>`
 	
@@ -155,6 +168,8 @@ function getPointGen() {
 	if (hasMilestone('fo', 1)) gain = gain.pow(1.2)
 	if (hasMilestone('fo', 2)) gain = gain.pow(1.25)
 	if (hasUpgrade('t', 23)) gain = gain.times(100)
+	if (hasUpgrade('t', 51)) gain = gain.times(100)
+
 
 	if (inChallenge('d', 11)) gain = gain.pow(0.1)
 	if (inChallenge('m',11)) gain = gain.pow(0.8)
@@ -170,12 +185,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: 35 forums' upgrade"},
+	function(){return"Current endgame: new layer unlocked"},
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	if (hasUpgrade('fo',14)) return true
+	if (player.g.unlocked) return true
 }
 
 
@@ -195,10 +210,10 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
-	if (hasAchievement('a', 31)) player.fr.upgrades = []
-	if (hasAchievement('a', 31)) player.fr.points = new Decimal(0)
-	if (hasAchievement('a', 17) && hasAchievement("a", 27)) player.a.achievements = ["27"]
-	else if (hasAchievement('a', 17) && hasAchievement("a", 26)) player.a.achievements = ["26"]
-	else if (hasAchievement('a', 17)) player.a.achievements = []
-	if (hasUpgrade('t', 11)) player.t.upgrades = []
+	if(player.d.upgrades.includes(toNumber(44)) || player.d.upgrades.includes("44")) player.d.upgrades.splice(player.d.upgrades.indexOf(44), 1), player.d.points = player.d.points.add(1)
+	if(player.a.achievements.includes(toNumber(19)) || player.a.achievements.includes("19")) player.a.achievements.splice(player.a.achievements.indexOf("19"), 1)
+	if(player.a.achievements.includes(toNumber(29)) || player.a.achievements.includes("29")) player.a.achievements.splice(player.a.achievements.indexOf("29"), 1)
+	if(player.a.achievements.includes(toNumber(39)) || player.a.achievements.includes("39")) player.a.achievements.splice(player.a.achievements.indexOf("39"), 1)
+	if(player.m.challenges[11]) player.m.challenges[11] = 0
+	if(player.t.challenges[11]) player.t.challenges[11] = 0
 }
