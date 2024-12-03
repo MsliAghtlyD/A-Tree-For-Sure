@@ -52,8 +52,8 @@ addLayer("c", {
         let pg = new Decimal(0)
         if (hasChallenge('m', 13)) pg = pg.add(1)
         if (hasUpgrade('c', 31 )) pg = pg.times(upgradeEffect('c', 31))
-        if (hasAchievement('a', 39)) pg = pg.times(upgradeEffect('c', 31).log(10)).add(1)
-        if (pg ==0) return false 
+        if (hasAchievement('a', 39)) pg = pg.times(upgradeEffect('c', 31).log(10).add(1))
+        if (pg <= 0) return false 
         return pg
     },
     
@@ -226,7 +226,7 @@ addLayer("c", {
             cost: new Decimal(1e15),
             unlocked() {
                 if (inChallenge('m', 14)) return false
-                return(hasUpgrade('c', 22))},
+                return(hasUpgrade('c', 22) && hasAchievement('a', 25))},
         },
         33:{
             title() {if(!hasUpgrade("fr", 34)) return"How long has it been since the last upgrade here?"
@@ -760,18 +760,19 @@ addLayer('t', {
     branches: [["c", 0]],
 
     doReset(resettingLayer) {
-        //let holdonu = []; //make new array to track extra upgrades you want to keep
-        // if (hasUpgrade("t",25)&&!hasUpgrade('fr')) holdonu.push(25);
+        let holdonu = []; //make new array to track extra upgrades you want to keep
+        if (hasUpgrade("t", 25) && !hasUpgrade('fr', 33)) holdonu.push(25);
         let holdonc = [];
         if (hasUpgrade('fr', 24)) holdonc.push(11);
         let keptChallenges = {};
         if (hasUpgrade('fr', 24)) keptChallenges[11] = challengeCompletions(this.layer, 11);
         if (hasUpgrade('fr', 24)) keptChallenges[12] = challengeCompletions(this.layer, 12);
-            
+        
     
         let keep = [];
             if (hasUpgrade('fr', 33) && !(resettingLayer=="g")) keep.push("upgrades")
             if (layers[resettingLayer].row > this.row) layerDataReset('t', keep)
+            if (!hasUpgrade('fr', 33) && layers[resettingLayer].row > this.row) player.t.upgrades.push(...holdonu) 
         for (const [id, completions] of Object.entries(keptChallenges)) {
             player[this.layer].challenges[id] = completions;
             }
@@ -781,7 +782,7 @@ addLayer('t', {
         let pg = new Decimal(0)
         if (hasUpgrade('fr', 32)) pg = pg.add(0.1)
         pg = pg.times(buyableEffect('t', 21))
-        if (pg ==0) return false 
+        if (pg <=0) return false 
         if (!temp.t.canReset) return false
         else return pg
     },
@@ -1360,7 +1361,7 @@ addLayer("fr", {
     passiveGeneration(){
         let pg = new Decimal(0)
         if (hasUpgrade('m', 14)) pg = pg.add(0.00001)
-        if (pg ==0) return false 
+        if (pg <=0) return false 
         if (!temp.fr.canReset) return false
         else return pg
     },

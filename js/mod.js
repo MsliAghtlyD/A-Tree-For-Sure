@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.04997",
+	num: "0.049971",
 	name: "A beginning",
 }
 
@@ -133,7 +133,10 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Added some achievements features<br>
 		- Corrected a few typso<br>
 		- Corrected a few bugs<br>
-		- Created a lot more<br><br>`
+		- Created a lot more<br><br>
+	<h3>v0.049971</h3><br>
+		- Passive generation cannot be negative anymore<br>
+		- The Theory upgrade that doubles friend capacity is now kept on friend reset again but does not infinitely replicate anymore<br><br>`
 	
 
 	
