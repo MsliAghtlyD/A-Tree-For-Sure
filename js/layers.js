@@ -878,6 +878,7 @@ addLayer('t', {
             currencyInternalName: "points",
             currencyLayer: "fo",
             pay() {return false},
+            fullDisplay() {return "<h3>"+this.title+"</h3><br>"+tmp[this.layer].upgrades[this.id].description+"<br><br>Requires: "+ this.cost+ " Forums"},
             onPurchase(){
                 if(hasUpgrade("t", 45)) player.t.upgrades.splice(player.t.upgrades.indexOf(45), 1)
             },
@@ -1159,19 +1160,19 @@ addLayer("fo", {
         return(player.c.points.gte(temp.fo.nextAt) && hasUpgrade('c', 32))
         
     },
-    tabFormat: [
-        "main-display",
-        "prestige-button",
-        "blank",
-        "resource-display",
-        "blank",
-        "buyables",
-        "blank",
-        "milestones",
-        "blank",
-        ["display-text", () => "Upgrades with forum as cost will require them, but never spend them. Because I said so."],
-        "upgrades",
-    ],
+    //tabFormat: [
+    //    "main-display",
+    //    "prestige-button",
+    //    "blank",
+    //    "resource-display",
+    //   "blank",
+    //    "buyables",
+    //    "blank",
+    //    "milestones",
+    //    "blank",
+    //    ["display-text", () => "Upgrades with forum as cost will require them, but never spend them. Because I said so."],
+    //    "upgrades",
+    //],
     hotkeys: [
         {key: "f", description: "F: Reset for forum", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
@@ -1240,6 +1241,7 @@ addLayer("fo", {
         11:{
             title: "The road to a billion friends starts with a single buyable",
             description: "Discover brand new mystery buyables to help you stop being so lonely",
+            fullDisplay() {return "<h3>"+this.title+"</h3><br>"+tmp[this.layer].upgrades[this.id].description+"<br><br>Requires: "+ this.cost+ " Forums"},
             cost: new Decimal(6),
             unlocked() {return(hasUpgrade('fr', 35)) },
             pay() {return false},
@@ -1247,6 +1249,7 @@ addLayer("fo", {
         12:{
             title: "Orlan strikes again",
             description: "You auto-get mysteries and they reset nothing <br><i>What do you mean you've never heard of him?</i>",
+            fullDisplay() {return "<h3>"+this.title+"</h3><br>"+tmp[this.layer].upgrades[this.id].description+"<br><br>Requires: "+ this.cost + " Forums"},
             cost: new Decimal(7),
             unlocked() {return(hasUpgrade('fo', 11)) },
             pay() {return false},
@@ -1262,12 +1265,14 @@ addLayer("fo", {
                 eff = new Decimal (3.1415).pow(eff)
                 return eff
             },
+            fullDisplay() {return "<h3>"+this.title+"</h3><br>"+tmp[this.layer].upgrades[this.id].description+"<br>Currently: ×"+format(this.effect())+"<br><br>Requires: "+ this.cost +" Forums"},
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             
         },
         14:{
             title: "Done being challenged",
             description: "<b>You're so cheap</b>'s effect starts being actually good<br><i>I feel like an idea is coming</i>",
+            fullDisplay() {return "<h3>"+this.title+"</h3><br>"+tmp[this.layer].upgrades[this.id].description+"<br><br>Requires: "+ this.cost+ " Forums"},
             cost: new Decimal(35),
             unlocked() {return (hasAchievement('a', 36))},
             pay() {return false},
@@ -1987,11 +1992,11 @@ addLayer("a", {
         },
 
         52: {
-            name: `I think you're onto something`,
-            done() {return (hasUpgrade("t", 51))},
+            name: `Something is very wrong here`,
+            done() {return (player.g.unlocked)},
             goalTooltip() {return "Uncover the new layer"},
             doneTooltip() {if (player.shiftin) return
-                return"Come on, don't sulk, you will have that upgrade one day"},
+                return"Please beware <br> Reward : Unlock this layer's milestones <br><i>Come on, don't sulk, you will have that upgrade soon</i>"},
             onComplete(){tmp.a.sea = tmp.a.sea.add(1)},
         },
 

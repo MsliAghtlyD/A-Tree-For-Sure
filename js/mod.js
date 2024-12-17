@@ -136,7 +136,10 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Created a lot more<br><br>
 	<h3>v0.049971</h3><br>
 		- Passive generation cannot be negative anymore<br>
-		- The Theory upgrade that doubles friend capacity is now kept on friend reset again but does not infinitely replicate anymore<br><br>`
+		- The Theory upgrade that doubles friend capacity is now kept on friend reset again but does not infinitely replicate anymore<br><br>
+	<h3>v0.049971a</h3><br>
+		- Forum upgrades now clearly state that they require, but don't cost anything<br>
+		- Version is not gonna be changed for such a small change (also due to still having the secrets achievements being rolled back for a while)<br><br>`
 	
 
 	
