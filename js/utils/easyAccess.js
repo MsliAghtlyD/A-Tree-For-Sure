@@ -14,6 +14,10 @@ function hasChallenge(layer, id) {
 	return ((player[layer].challenges[id]) && !tmp[layer].deactivated)
 }
 
+function hasBuyable(layer, id) {
+	return ((Decimal.equals(player[layer].buyables[id], tmp[layer].buyables[id].purchaseLimit)) && !tmp[layer].deactivated)
+}
+
 function maxedChallenge(layer, id) {
 	return ((player[layer].challenges[id] >= tmp[layer].challenges[id].completionLimit) && !tmp[layer].deactivated)
 }
@@ -52,6 +56,10 @@ function setGridData(layer, id, data) {
 
 function upgradeEffect(layer, id) {
 	return (tmp[layer].upgrades[id].effect)
+}
+
+function upgradeCost(layer, id) {
+	return (tmp[layer].upgrades[id].cost)
 }
 
 function upgradeRepare(layer, id) {

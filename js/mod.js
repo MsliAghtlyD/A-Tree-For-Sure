@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.049971",
+	num: "0.049975",
 	name: "A beginning",
 }
 
@@ -129,7 +129,7 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Added a few upgrades and achievements<br>
 		- No more resetting theory upgrades or related achievements but secret achievements have been rolled back<br>
 		- The endgame has been pushed back a very little bit<br>
-		- Groundwork for the next layer has been set<br>
+		- The next layer has been added<br>
 		- Added some achievements features<br>
 		- Corrected a few typso<br>
 		- Corrected a few bugs<br>
@@ -139,7 +139,15 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- The Theory upgrade that doubles friend capacity is now kept on friend reset again but does not infinitely replicate anymore<br><br>
 	<h3>v0.049971a</h3><br>
 		- Forum upgrades now clearly state that they require, but don't cost anything<br>
-		- Version is not gonna be changed for such a small change (also due to still having the secrets achievements being rolled back for a while)<br><br>`
+		- Version is not gonna be changed for such a small change (also due to still having the secrets achievements being rolled back for a while)<br><br>
+	<h3>v0.049975</h3><br>
+		- Started adding content on the Global Conspiracy layer<br>
+		- Restrained Cookie<br>
+		- Worked on the content for the GC layer's next update<br>
+		- Releasing it fast because GC is made by tweaking the game so I'm sure I made it very wonky-ly and want/need some testers firsts<br>
+		- Corrected a few typso<br>
+		- Corrected a few bugs<br>
+		- Created a lot more<br><br>`
 	
 
 	
@@ -175,7 +183,7 @@ function getPointGen() {
 	if (hasMilestone('fo', 2)) gain = gain.pow(1.25)
 	if (hasUpgrade('t', 23)) gain = gain.times(100)
 	if (hasUpgrade('t', 51)) gain = gain.times(100)
-
+	if (player.g.unlocked) gain = gain.times(tmp["g"].effect)
 
 	if (inChallenge('d', 11)) gain = gain.pow(0.1)
 	if (inChallenge('m',11)) gain = gain.pow(0.8)
@@ -191,12 +199,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: new layer unlocked"},
+	function(){return"Current endgame: get *that* theory upgrade"},
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	if (player.g.unlocked) return true
+	return(hasAchievement('a', 53))
 }
 
 
