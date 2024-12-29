@@ -1564,7 +1564,7 @@ addLayer(`g`, {
     },
 
     canReset(){if(hasUpgrade('t', 52) && !hasAchievement('a', 53)) return false
-        return(player.m.points.gte(temp.g.nextAt))
+        return(player.m.points.gte(temp.g.requires))
     },
 
     baseResource: `mysteries`,                 // The name of the resource your prestige gain is based on.
