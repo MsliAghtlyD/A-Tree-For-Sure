@@ -241,7 +241,7 @@ addLayer(`c`, {
             cost: new Decimal(1e122),
             unlocked() {return hasUpgrade('fo', 14)},
             effect() {if (!hasUpgrade('fr', 34)){
-                let eff = new Decimal (player.fr.points)
+                let eff = new Decimal (player.fr.points.plus(1))
                 eff = eff.log(3).pow(7).plus(1)
                 return eff}
                 if(hasAchievement('a', 51)) {
