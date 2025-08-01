@@ -199,7 +199,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: get that new upgrade or something I dunno"},
+	function(){return"Current endgame: get *that* theory upgrade"},
 ]
 
 // Determines when the game "ends"
