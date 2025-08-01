@@ -3,7 +3,7 @@ let modInfo = {
 	id: "thismodsurewaswrittenbymsliaghtlyd",
 	author: "MsliAghtlyD",
 	pointsName: "questions",
-	modFiles: ["layers.js", "tree.js"],
+	modFiles: ["clumys.js", "tree.js", "achievements.js", "globalc.js", "ffgang.js", "theodesp.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -199,7 +199,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: get *that* theory upgrade"},
+	function(){return"Current endgame: get that new upgrade or something I dunno"},
 ]
 
 // Determines when the game "ends"

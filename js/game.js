@@ -246,14 +246,19 @@ function resetRow(row) {
 
 function startChallenge(layer, x) {
 	let enter = false
-	if (!player[layer].unlocked || !tmp[layer].challenges[x].unlocked) return
+	if (!player[layer].unlocked) return
 	if (player[layer].activeChallenge == x) {
 		completeChallenge(layer, x)
 		Vue.set(player[layer], "activeChallenge", null)
 		} else {
 		enter = true
 	}	
-	doReset(layer, true)
+	if (player[layer].activeChallenge != x) {
+		completeChallenge(layer)}
+
+	if(tmp[layer].challenges[x].reseter == undefined){
+		doReset(layer, true)}
+
 	if(enter) {
 		Vue.set(player[layer], "activeChallenge", x)
 		run(layers[layer].challenges[x].onEnter, layers[layer].challenges[x])
