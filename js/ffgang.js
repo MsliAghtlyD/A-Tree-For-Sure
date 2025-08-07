@@ -39,6 +39,9 @@ addLayer(`fo`, {
     },
     branches: [['t', 1]],
 
+    tooltipLocked(){if (!player.fr.unlocked && !hasUpgrade('c', 32)) return 'Reach ' + formatWhole(tmp['fo'].requires) + ' ' + tmp['fo'].baseResource + ' to unlock, but you might also need something else (You have ' + formatWhole(tmp['fo'].baseAmount) + ' ' + tmp['fo'].baseResource + ')'
+        return},
+
     autoPrestige() {return hasMilestone('fo', 8)},
 
     resetsNothing() {return hasMilestone('fo', 8)},
@@ -230,6 +233,10 @@ addLayer(`fr`, {
     },
     branches: [['t', 1]],
     
+    tooltipLocked(){if (!player.fr.unlocked && !hasUpgrade('c', 32)) return 'Reach ' + formatWhole(tmp['fr'].requires) + ' ' + tmp['fr'].baseResource + ' to unlock, but you might also need something else (You have ' + formatWhole(tmp['fr'].baseAmount) + ' ' + tmp['fr'].baseResource + ')'
+return},
+
+
     update() {
         let max = new Decimal (8000000000)
         if (hasUpgrade(`t`, 25)) max = max.times(2)

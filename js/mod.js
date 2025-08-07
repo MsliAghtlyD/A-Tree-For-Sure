@@ -156,7 +156,10 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Split the layers in different files for readability<br>
 		- Corrected a few typso<br>
 		- Corrected a few bugs<br>
-		- Created a lot more<br><br>`
+		- Created a lot more<br><br>
+	<h3>v0.04999a</h3><br>
+		- Added a new locked tooltip for the friends and forum layers so people would be sure it was not just a bug<br>
+		`
 	
 
 	
