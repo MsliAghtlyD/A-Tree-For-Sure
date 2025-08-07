@@ -458,6 +458,14 @@ addLayer(`a`, {
                 return`Pervert.`},
         },
 
+        56: {
+            name: `[PLACEHOLDER]`,
+            done() {return (hasUpgrade('t', 52) && hasAchievement('a', 53))},
+            goalTooltip() {return `For whenever that cursed upgrade will be reachable`},
+            doneTooltip() {if (player.shiftin) return
+                return`Reward: Clue layer will not flash red all the time anymore. <br><i>Oh it already was reachable? Well that's neat.</i>`},
+        },
+
 
 
     },

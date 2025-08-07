@@ -318,7 +318,7 @@ addLayer('t', {
             pay() {return false},
             fullDisplay() {return `<h3>`+this.title+`</h3><br>`+tmp[this.layer].upgrades[this.id].description+`<br><br>Requires: `+ this.cost+ ` Forums`},
             onPurchase(){
-                if(hasUpgrade(`t`, 45)) player.t.upgrades.splice(player.t.upgrades.indexOf(45), 1)
+                if(hasUpgrade(`t`, 45)) player.t.upgrades.splice(player.t.upgrades.indexOf('45'), 1)
             },
             style() {const style = {}; if (player.a.clickables[12]==1 && !hasAchievement(`a`, 41)&&hasUpgrade(`t`, 45)) style[`background-color`] = `#004400`; return style},
         },
@@ -368,6 +368,7 @@ addLayer('t', {
             cost: new Decimal(5e103),
             effect() {
                 let eff = Decimal.mul(player.t.upgrades.length, 0.1)
+                if(hasUpgrade('fr', 22) && hasUpgrade('g', 14) && !inChallenge('t', 13)) eff=eff.plus(upgradeEffect('fr', 22).log(1e10))
                 return eff
             },
             onPurchase(){
@@ -382,7 +383,7 @@ addLayer('t', {
             cost: new Decimal(1e110),
             onPurchase(){
                 if (hasAchievement('a', 41)) return
-                if(hasUpgrade(`t`, 25)) player.t.upgrades.splice(player.t.upgrades.indexOf(25), 1)
+                if(hasUpgrade(`t`, 25)) player.t.upgrades.splice(player.t.upgrades.indexOf('25'), 1)
                 if(tmp.t.baf==0) tmp.a.seam = tmp.a.seam.add(1)
                 tmp.t.baf = tmp.t.baf.add(1)
             },
@@ -412,7 +413,7 @@ addLayer('t', {
                 if(tmp.t.cfb.equals(2)) setTimeout(() => { doPopup(style= `default`, text = `Stop touching this thing`, title = `He growled`, timer = 3, color = `#aa5a0b`) , player.t.points = player.t.points.times(0) , doReset('t', true)}, 2000);
                 if(tmp.t.cfb.equals(3)) setTimeout(() => { doPopup(style= `default`, text = `What did I just tell you`, title = `He replied`, timer = 3, color = `#aa5a0b`) , player.t.points = player.t.points.times(0) , doReset('t', true)}, 2000);
                 if(tmp.t.cfb.equals(4)) setTimeout(() => { doPopup(style= `default`, text = `See if you cross me again like that`, title = `He rebuted`, timer = 3, color = `#aa5a0b`) , player.t.points = player.t.points.times(0) , player.m.points = player.m.points.times(0) , doReset('t', true)}, 2000);
-                setTimeout(() => { player.t.upgrades.splice(player.t.upgrades.indexOf(52), 1) , tmp.t.cfb = tmp.t.cfb.add(1) }, 5000);
+                setTimeout(() => { player.t.upgrades.splice(player.t.upgrades.indexOf('52'), 1) , tmp.t.cfb = tmp.t.cfb.add(1) }, 5000);
 
             },
         },
@@ -420,7 +421,7 @@ addLayer('t', {
             title: `Ladies and Gentlemen,  we in fact do not got him`,
             description: `Total Global conspiracy boosts Mystery gain <br><i>So I could finally get that upgrade, and all of a sudden it breaks? how convenient</i>`,
             cost: new Decimal("1e310"),
-            unlocked() {return(hasAchievement(`a`, 54))},
+            unlocked() {return(hasAchievement(`a`, 53))},
         },
         54:{
             title: `The other half of a cure`,
@@ -456,7 +457,7 @@ addLayer('t', {
                 let push = new Decimal (`1e5`)
                 push = push.pow(getBuyableAmount('t', 12))
                 softcap = softcap.times(push)
-                return`Will definitely get softcapped past x`+softcap
+                return`Will definitely get softcapped past x`+format(softcap)
         
             },
             effect(x) {
@@ -535,7 +536,7 @@ addLayer('t', {
     
     update(){
         if(hasUpgrade('t', 42) && !player.g.clickables[11]==1){
-            if(tmp.t.buyables[11].canAfford) setBuyableAmount(`t`, 11, player.t.points.div(5).mul(buyableEffect('m', 21)).log(buyableEffect('t', 12).add(5)).floor().add(1))
+            if(tmp.t.buyables[11].canAfford) setBuyableAmount(`t`, 11, player.t.points.add(1).div(5).mul(buyableEffect('m', 21)).log(buyableEffect('t', 12).add(5)).floor().add(1))
         }
         
 

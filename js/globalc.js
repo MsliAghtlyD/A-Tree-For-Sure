@@ -4,6 +4,7 @@ addLayer(`g`, {
         unlocked: false,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // `points` is the internal name for the main resource of the layer.
         chalon: new Decimal(0),
+        chalto: new Decimal(0),
     }},
 
     color: `#EDD258`,                       // The color for this layer, which affects many elements.
@@ -59,14 +60,18 @@ addLayer(`g`, {
             },
             fullDisplay() {return `<h3>`+this.title+`</h3><br>`+tmp[this.layer].upgrades[this.id].description+`<br><br>Requires: `+ this.cost +` Global conspiracies`},
             cost: new Decimal(1),
-            onPurchase() {player.g.points = player.g.points.add(upgradeCost(this.layer, this.id))},
+            onPurchase() {player.g.points = player.g.points.add(upgradeCost(this.layer, this.id))
+                doPopup(style= `default`, text = this.title, title = `"Milestone" reached`, timer = 3, color = `#EDD258`)
+            },
         },
         12:{ 
             title: `I swear these used to look different`,
             description() {return `Unlock this layer's ugprades.<br><i><b>They</b> will apparently let you have some help. But at a cost, how dastardly</i>`},
             fullDisplay() {return `<h3>`+this.title+`</h3><br>`+tmp[this.layer].upgrades[this.id].description+`<br><br>Requires: `+ this.cost+` Global conspiracies`},
             cost: new Decimal(5),
-            onPurchase() {player.g.points = player.g.points.add(upgradeCost(this.layer, this.id))},
+            onPurchase() {player.g.points = player.g.points.add(upgradeCost(this.layer, this.id))
+                doPopup(style= `default`, text = this.title, title = `"Milestone" reached`, timer = 3, color = `#EDD258`)
+            },
             unlocked() {return hasUpgrade('g', 11)},
 
         },
@@ -78,7 +83,21 @@ addLayer(`g`, {
             currencyDisplayName: `Mysteries`,
             currencyInternalName: `points`,
             currencyLayer: `m`,
-            unlocked() {return hasUpgrade('g', 13)}, 
+            unlocked() {return hasUpgrade('g', 12)}, 
+            onPurchase() {doPopup(style= `default`, text = this.title, title = `"Milestone" reached`, timer = 3, color = `#EDD258`)
+            },
+        },
+        14:{ 
+            title: `Is it a bird? Is it a plane?`,
+            description() {return `<i>No actually that's just Hector again<i> Hector's effect is mulltiplied by 10 and applied again to any upgrades that didn't get his boost.<br><i><b>They</b> might have made an enemy of him</i>`},
+            fullDisplay() {return `<h3>`+this.title+`</h3><br>`+tmp[this.layer].upgrades[this.id].description+`<br><br>Requires: `+ this.cost+` Mysteries`},
+            cost: format(new Decimal(1e9)),
+            currencyDisplayName: `Mysteries`,
+            currencyInternalName: `points`,
+            currencyLayer: `m`,
+            unlocked() {return player.g.chalto.gte(1)}, 
+            onPurchase() {doPopup(style= `default`, text = this.title, title = `"Milestone" reached`, timer = 3, color = `#EDD258`)
+            },
         },
     },
 
@@ -90,10 +109,10 @@ addLayer(`g`, {
            // completionGoal: new Decimal(10).power(challengeCompletions('g', this.id).add(1)),
             challengeDescription: `Get a taste of the same reality except darker, almost orwellian`,
             goalDescription: function(){ let goal = new Decimal(10).pow(Decimal.add(1, challengeCompletions('g', this.id)))
-                return `get `+goal+` Global Conspiracies and then get the hell out`},
+                return `get `+format(goal)+` Global Conspiracies and then get the hell out`},
             rewardDescription: function() {return `Mystery layer's <b>You're so cheap</b> base is raised to the power of ${challengeCompletions('g',11)+1}`},
             canComplete: function() {return player.g.points.gte(new Decimal(10).pow(Decimal.add(1, challengeCompletions('g', this.id))))},
-            unlocked() {return(hasAchievement('a', 54))},
+            unlocked() {return(hasAchievement('a', 53))},
             onComplete(){let goal = new Decimal(10).pow(challengeCompletions('g', this.id))
                 player.g.points = player.g.points.minus(goal)},
             onEnter(){if(this.canComplete('g', 11)) completeChallenge('g')},
@@ -110,38 +129,34 @@ addLayer(`g`, {
             title: `The first challenge`,
             display() {
                 if(player.g.clickables[this.id]==0){return `Click here to do a <b>Global Conspiracies</b> reset and enter a challenge world.<br>In this world your <b>Theory</b> buyables are limited, all theory buyable automation is restricted.<br>Effect: <b>Global conspiracy</b>'s layer effect is raised by `+ player.g.chalon.times(3).add(1)}
+                if(!player.g.clickables[this.id]==0 && player.g.chalon==11){return `Click here to do a <b>Global Conspiracies</b> reset and exit the challenge world.<br>In this world your <b>Theory</b> buyables are limited, all theory buyable automation is restricted.<br>I think you've had enough now.`}
                 return (`Click here to do a <b>Global Conspiracies</b> reset and exit the challenge world.<br>In this world your <b>Theory</b> buyables are limited, all theory buyable automation is restricted.<br>You can have a maximum of ` +tmp.g.clickables[this.id].limit + ` <b>Theory</b> buyables<br>Reach ` + tmp.g.clickables[this.id].goal + ` theories to be able to complete the challenge.`)},
             canClick(){return true},
             onClick(){
-                if(player.g.clickables[this.id]==1 && player.t.points.gte(new Decimal(1e110).times(Decimal.pow(10, Decimal.times(10, player.g.chalon))))) player.g.chalon = player.g.chalon.add(1)
+                if(player.g.clickables[this.id]==1 && player.t.points.gte(tmp.g.clickables[this.id].goal) && player.g.chalon.lt(11)) player.g.chalon = player.g.chalon.add(1)
                 if(player.g.clickables[this.id]==1)player.g.clickables[this.id]=0
                 else player.g.clickables[this.id]=1
                 doReset('g', 1)},
-            unlocked(){if(challengeCompletions('g', 11)==0) return false
-            else return true},
+            unlocked(){return(!challengeCompletions('g', 11)==0)},
             limit() {return(new Decimal(10).minus(player.g.chalon).times(3))},
-            completions: new Decimal(0),
-            goal() {return (new Decimal(1e10).pow(player.g.chalon.add(1)).times(1e100))}
+            goal() {return (new Decimal(1e10).pow(player.g.chalon).times(1e110))}
            
     },
     12: {
         title: `They're making it harder but just for me personally`,
         display() {
-            if(player.g.clickables[this.id]==0){return `Click here to do a <b>Global Conspiracies</b> reset and enter a challenge world.<br>In this world you are stuck in every layer 2 challenge, except the fourth mystery challenge and the despair challenge.<br>Effect: <b>Global conspiracy</b>'s layer effect is raised by `+ player.g.chalon.times(3).add(1)}
-            return (`Click here to do a <b>Global Conspiracies</b> reset and exit the challenge world.<br>In this world you are stuck in every layer 2 challenge, except the fourth mystery challenge and the despair challenge. Reach ` + tmp.g.clickables[this.id].goal + ` theories to be able to complete the challenge.`)},
+            if(player.g.clickables[this.id]==0){return `Click here to do a <b>Global Conspiracies</b> reset and enter a challenge world.<br>In this world you are stuck in every layer 2 challenge, except the fourth mystery challenge and the despair challenge.<br>Effect: <b>Can I get another one?</b> upgrade is raised by `+ player.g.chalto.times(2).add(1)}
+            return (`Click here to do a <b>Global Conspiracies</b> reset and exit the challenge world.<br>In this world you are stuck in every layer 2 challenge, except the fourth mystery challenge and the despair challenge. Reach ` + format(tmp.g.clickables[this.id].goal) + ` questions to be able to complete the challenge.`)},
         canClick(){return true},
         onClick(){
-            if(player.g.clickables[this.id]==1 && player.t.points.gte(new Decimal(1e110).times(Decimal.pow(10, Decimal.times(10, player.g.chalon))))) player.g.chalon = player.g.chalon.add(1)
+            if(player.g.clickables[this.id]==1 && player.points.gte(tmp.g.clickables[this.id].goal)) player.g.chalto = player.g.chalto.add(1)
             if(player.g.clickables[this.id]==1)player.g.clickables[this.id]=0
             else player.g.clickables[this.id]=1
             doReset('g', 1)
             if(player.g.clickables[this.id]==1) {startChallenge('t', 13), startChallenge('m', 15)}
             },
-        unlocked(){if(challengeCompletions('g', 11)==0) return false
-        else return true},
-        limit() {return(new Decimal(10).minus(player.g.chalon).times(3))},
-        completions: new Decimal(0),
-        goal() {return (new Decimal(1e10).pow(player.g.chalon.add(1)).times(1e100))}
+        unlocked(){return hasAchievement('a', 55)},
+        goal() {return (new Decimal(1e5).pow(player.g.chalto).times(1e10))},
        
 },
 

@@ -172,9 +172,10 @@ addLayer(`fo`, {
             effect() {
                 let eff = new Decimal (player.fo.points)
                 eff = new Decimal (3.1415).pow(eff)
+                if(hasUpgrade('fr', 22) && hasUpgrade('g', 14) && !inChallenge('t', 13)) eff=eff.times(upgradeEffect('fr', 22))
                 return eff
             },
-            fullDisplay() {return `<h3>`+this.title+`</h3><br>`+tmp[this.layer].upgrades[this.id].description+`<br>Currently: ×`+format(this.effect())+`<br><br>Requires: `+ this.cost +` Forums`},
+            fullDisplay() {return `<h3>`+this.title+`</h3><br>`+tmp[this.layer].upgrades[this.id].description+`<br>Currently: `+format(this.effect())+`×<br><br>Requires: `+ this.cost +` Forums`},
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+`x` }, // Add formatting to the effect
             
         },
@@ -346,7 +347,8 @@ addLayer(`fr`, {
                 softeff = softcap(eff, new Decimal(softlim), new Decimal(0.25))
                 return softeff
             },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+`x` }, // Add formatting to the effect
+            effectDisplay() { if(inChallenge('t', 12)) return '/'+format(upgradeEffect(this.layer, this.id).pow('-1'))
+                return format(upgradeEffect(this.layer, this.id))+`x` }, // Add formatting to the effect
             unlocked() {return((hasUpgrade('fr', 21) && (hasAchievement('a', 27)||hasAchievement('a', 35))) || hasAchievement(`a`, 26) && hasUpgrade('fr', 24))},
             tooltip: `But only works on pre forum/friends upgrades`,
             style() {

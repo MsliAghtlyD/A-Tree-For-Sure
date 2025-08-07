@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.049975",
+	num: "0.04999",
 	name: "A beginning",
 }
 
@@ -147,6 +147,15 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Releasing it fast because GC is made by tweaking the game so I'm sure I made it very wonky-ly and want/need some testers firsts<br>
 		- Corrected a few typso<br>
 		- Corrected a few bugs<br>
+		- Created a lot more<br><br>
+	<h3>v0.04999</h3><br>
+		- Global Conspiracy layer is fully created<br>
+		- Added a few upgrades, milestones, challenges, achievements, but no buyable, truly an update<br>
+		- The endgame has been pushed back quite a lot<br>
+		- Mainly a content upgrade<br>
+		- Split the layers in different files for readability<br>
+		- Corrected a few typso<br>
+		- Corrected a few bugs<br>
 		- Created a lot more<br><br>`
 	
 
@@ -199,12 +208,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	function(){return"Current endgame: get *that* theory upgrade"},
+	function(){return"Current endgame: 74 forums"},
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return(hasAchievement('a', 53))
+	return(player.fo.points.gte(74))
 }
 
 
@@ -224,7 +233,7 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
-	if(player.d.upgrades.includes(toNumber(44)) || player.d.upgrades.includes("44")) player.d.upgrades.splice(player.d.upgrades.indexOf(44), 1), player.d.points = player.d.points.add(1)
+	if(player.d.upgrades.includes(toNumber(44)) || player.d.upgrades.includes("44")) player.d.upgrades.splice(player.d.upgrades.indexOf('44'), 1), player.d.points = player.d.points.add(1)
 	if(player.a.achievements.includes(toNumber(19)) || player.a.achievements.includes("19")) player.a.achievements.splice(player.a.achievements.indexOf("19"), 1)
 	if(player.a.achievements.includes(toNumber(29)) || player.a.achievements.includes("29")) player.a.achievements.splice(player.a.achievements.indexOf("29"), 1)
 	if(player.a.achievements.includes(toNumber(39)) || player.a.achievements.includes("39")) player.a.achievements.splice(player.a.achievements.indexOf("39"), 1)

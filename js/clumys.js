@@ -218,7 +218,7 @@ addLayer(`c`, {
                 if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
                 if (hasUpgrade('t', 13)) return eff
                 eff = new Decimal.add(player[this.layer].upgrades.length, 1)
-                if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
+                if(hasUpgrade('fr', 22) && hasUpgrade('g', 14) && !inChallenge('t', 13)) weff=weff.times(upgradeEffect('fr', 22))
                 return eff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+`x` }, // Add formatting to the effect
@@ -246,7 +246,8 @@ addLayer(`c`, {
                 eff = eff.log(3).pow(7).plus(1)
                 return eff}
                 if(hasAchievement('a', 51)) {
-                    let eff = new Decimal(player.fo.points.log(6).add(1))
+                    let eff = new Decimal(player.fo.points.log(6).add(1))                
+                    if(hasUpgrade('fr', 22) && hasUpgrade('g', 14) && !inChallenge('t', 13)) eff=eff.plus(upgradeEffect('fr', 22).log(1e10))
                     return eff
                 }
                 return false},
@@ -382,9 +383,10 @@ addLayer(`m`, {
                 let softlim = new Decimal(1e15)
                 if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
                 softeff = softcap(eff, softlim, new Decimal(0.25))
-                return softeff}
-                weff = player.points.add(1).pow(0.01)
-                if(hasUpgrade('fr', 22)) eff=eff.times(upgradeEffect('fr', 22))
+                return softeff}0
+                poww = new Decimal(0.01).times(player.g.chalto.times(2).add(1))
+                weff = player.points.add(1).pow(poww)
+                if(hasUpgrade('fr', 22) && hasUpgrade('g', 14) && !inChallenge('t', 13)) weff=weff.times(upgradeEffect('fr', 22))
                 return weff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+`x` }, // Add formatting to the effect
