@@ -159,6 +159,7 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Created a lot more<br><br>
 	<h3>v0.04999a</h3><br>
 		- Added a new locked tooltip for the friends and forum layers so people would be sure it was not just a bug<br>
+		- Theory upgrades are now spliced correctly again
 		`
 	
 
