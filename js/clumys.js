@@ -448,7 +448,7 @@ addLayer(`m`, {
             rewardDescription:`clue base gets boosted`,
             canComplete: function() {return player.points.gte(1e7)},
             unlocked() {if(hasAchievement('a', 13)) return true},
-            onComplete() {tmp.a.seam = tmp.a.seam.add(1)},
+            onComplete() {player.a.seam = player.a.seam.add(1)},
             style() {const style = {}; if (player.a.clickables[12]==1 && !hasAchievement(`a`, 19)) style[`background-color`] = `#004400`; return style}
         },
         12: {
