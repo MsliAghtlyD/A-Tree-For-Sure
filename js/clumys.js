@@ -388,6 +388,7 @@ addLayer(`m`, {
                 return softeff}0
                 poww = new Decimal(0.01).times(player.g.chalto.times(2).add(1))
                 weff = player.points.add(1).pow(poww)
+                softweff = softcap(weff, new Decimal("1e512"), new Decimal(0.25))
                 if(hasUpgrade('fr', 22) && hasUpgrade('g', 14) && !inChallenge('t', 13)) weff=weff.times(upgradeEffect('fr', 22))
                 return weff
             },
@@ -481,7 +482,7 @@ addLayer(`m`, {
             challengeDescription: `test`,
             goalDescription:`test`,
             rewardDescription:`test`,
-            canComplete: function() {return player.points.gte(1e11)&&hasUpgrade('c', 22)},
+            canComplete: function() {return false},
             unlocked() {return false},
             countsAs: [11, 12, 13],
             onExit() {if(player.g.clickables[12]==1) {player.g.clickables[12]=0, startChallenge('t', 13)}},
