@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.04999",
+	num: "0.04999a",
 	name: "A beginning",
 }
 
@@ -161,6 +161,7 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Added a new locked tooltip for the friends and forum layers so people would be sure it was not just a bug<br>
 		- Theory upgrades are now spliced correctly again<br>
 		- Added a cap to clue upgrades and theory layer effect to prevent infinite exponention<br>
+		- Fixed the whole secret achievements clue again<br>
 		- Corrected a few typso<br>
 		`
 	
