@@ -425,7 +425,7 @@ addLayer('t', {
         },
         54:{
             title: `The other half of a cure`,
-            description: `<i>Don't ask me what we're curing, I'm pretty sure they just wanted some attention and reassurance.</i><br>Global conspiracies gain is slightly boosted.`,
+            description: `<i>Don't ask me what we're gonna cure, I'm pretty sure they just wanted some attention and reassurance.</i><br>Global conspiracies gain is slightly boosted. <i><br>Although now you're gonna have to find what to cure<i>`,
             cost: new Decimal("1e375"),
             unlocked() {return(hasUpgrade(`c`, 41))},
         },
