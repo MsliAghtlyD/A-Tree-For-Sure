@@ -239,7 +239,7 @@ return},
 
     update() {
         let max = new Decimal (8000000000)
-        if (hasUpgrade(`t`, 25)) max = max.times(2)
+        if (hasUpgrade(`t`, 25) && !hasUpgrade('t', 45)) max = max.times(2)
         if (hasUpgrade(`t`, 45)) max = max.times(player.fo.points)
         if (player.fr.points.gte(max)) player.fr.points= new Decimal (max);
         player.fr.stohp = max
