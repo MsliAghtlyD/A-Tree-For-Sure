@@ -1,6 +1,8 @@
 addLayer(`a`, {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: true,                     // You can add more variables here to add them to your layer.
+        sea : new Decimal(0),
+        seam : new Decimal(0),
     }},
 
     color: `#FFFF00`,                       // The color for this layer, which affects many elements.
@@ -17,7 +19,7 @@ addLayer(`a`, {
              boosting your self esteem by `+format(eff)},
             {"font-size": `32px`}],
         [`display-text`,
-            function(){if(player.a.clickables[11]==1) return `You found ${tmp.a.sea}/${tmp.a.seam} Secret Achievements <br>`}],
+            function(){if(player.a.clickables[11]==1) return `You found ${player.a.sea}/${player.a.seam} Secret Achievements <br>`}],
         `blank`,
         `blank`,
         `clickables`,
@@ -41,7 +43,7 @@ addLayer(`a`, {
 
     effect() {
         eff = new Decimal(player.a.achievements.length)
-        eff = eff.pow(eff.pow(tmp.a.sea.add(1)))
+        eff = eff.pow(eff.pow(player.a.sea.add(1)))
         return eff
         },
 
@@ -184,7 +186,7 @@ addLayer(`a`, {
 
             doneTooltip() {return`Reward : A way to boost passive clue gain later on (but don't forget to buy it back after resets)`},
             unlocked() {return (hasAchievement('a', 19))},
-            onComplete(){tmp.a.sea = tmp.a.sea.add(1)},
+            onComplete(){player.a.sea = player.a.sea.add(1)},
             
             style() {const style = {}; if (hasAchievement(this.layer,this.id)) style[`background-color`] = `#A75FBF`; return style}
         },
@@ -282,7 +284,7 @@ addLayer(`a`, {
             doneTooltip() {if (player.shiftin) return
                 return`Reward : something, surely, sometime`},
             unlocked() {return (hasAchievement('a', 29))},
-            onComplete(){tmp.a.sea = tmp.a.sea.add(1)},
+            onComplete(){player.a.sea = player.a.sea.add(1)},
             style() {const style = {}; if (hasAchievement(this.layer,this.id)) style[`background-color`] = `#A75FBF`; return style}
 
         },
@@ -387,7 +389,7 @@ addLayer(`a`, {
             doneTooltip() {if (player.shiftin) return
                 return`That was a pain guess I'll make part of <b>No. No it's not.</>'s base take effect even when not bought yet. You deserve it`},
             unlocked() {return (hasAchievement('a', 39))},
-            onComplete(){tmp.a.sea = tmp.a.sea.add(1)},
+            onComplete(){player.a.sea = player.a.sea.add(1)},
             style() {const style = {}; if (hasAchievement(this.layer,this.id)) style[`background-color`] = `#A75FBF`; return style}
 
         },
@@ -398,8 +400,8 @@ addLayer(`a`, {
             goalTooltip() {return`Fidget with the mutually repulsive theory upgrades`},
             unlocked() {return (hasAchievement('a', 41))},
             doneTooltip() {if (player.shiftin) return
-                return`Can't blame you, it felt good playing with it <br><br> You get to keep both upgrades I guess then`},
-            onComplete(){tmp.a.sea = tmp.a.sea.add(1)},
+                return`Can't blame you, it felt good playing with it <br><br> You get to keep both upgrades I guess then, but only the stronger effect`},
+            onComplete(){player.a.sea = player.a.sea.add(1)},
             style() {const style = {}; if (hasAchievement(this.layer,this.id)) style[`background-color`] = `#A75FBF`; return style}
         },
 
@@ -410,7 +412,7 @@ addLayer(`a`, {
             unlocked() {return (hasAchievement('a', this.id))},
             doneTooltip() {if (player.shiftin) return
                 return`You just had to find what that did, didn't you? Well it had consequences too bad`},
-            onComplete(){tmp.a.sea = tmp.a.sea.add(1)},
+            onComplete(){player.a.sea = player.a.sea.add(1)},
             style() {const style = {}; if (hasAchievement(this.layer,this.id)) style[`background-color`] = `#A75FBF`; return style}
         },
 
