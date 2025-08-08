@@ -102,7 +102,7 @@ addLayer(`c`, {
                 softeff = softcap(eff, softlim, new Decimal(0.3))
                 return softeff}
                 weff = player.c.points.add(1) .pow(0.1)
-                softweff = softcap(weff, new Decimal(1e256), new Decimal(0))               
+                softweff = softcap(weff, new Decimal(1e256), new Decimal(0.25))               
                 if(hasUpgrade('c',15)) softweff = softweff.times(upgradeEffect('c', 15))
                 if(hasUpgrade('fr', 22)) softweff = softweff.times(upgradeEffect('fr', 22))
                 return softweff
@@ -137,7 +137,7 @@ addLayer(`c`, {
                 return softeff}
                 weff = player.c.points.add(1).pow(0.1)
                 if(hasUpgrade('fr', 22)) weff=weff.times(upgradeEffect('fr', 22))
-                softweff = softcap(weff, new Decimal(1e256), new Decimal(0.5))
+                softweff = softcap(weff, new Decimal(1e256), new Decimal(0.25))
                 return softweff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+`x` }, // Add formatting to the effect
