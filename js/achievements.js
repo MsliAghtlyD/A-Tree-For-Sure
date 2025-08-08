@@ -3,7 +3,7 @@ addLayer(`a`, {
         unlocked: true,                     // You can add more variables here to add them to your layer.
         sea : new Decimal(0),
         seam : new Decimal(0),
-        clickon : 0,
+        clicon : 0,
     }},
 
     color: `#FFFF00`,                       // The color for this layer, which affects many elements.
@@ -91,7 +91,7 @@ addLayer(`a`, {
         onClick(){
             if(player.a.clickables[21]==1)player.a.clickables[21]=0
             else player.a.clickables[21]=1},
-        unlocked(){if(player.a.clicon==1 || player.a.clickables[21]==1) return false
+        unlocked(){if(player.a.clicon==1 || player.a.clickables[21]==1 || player.a.clickables[11]==1 || player.a.clickables[12]==1) return false
         return true},
         style() {const style = {}; if (player.a.clickables[21]==0) style[`background-color`] = `#FF0000`; return style},
 
