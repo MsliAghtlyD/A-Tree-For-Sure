@@ -89,7 +89,7 @@ addLayer(`g`, {
         },
         14:{ 
             title: `Is it a bird? Is it a plane?`,
-            description() {return `<i>No actually that's just Hector again<i> Hector's effect is mulltiplied by 10 and applied again to any upgrades that didn't get his boost.<br><i><b>They</b> might have made an enemy of him</i>`},
+            description() {return `<i>No actually that's just Hector again<i> Hector's effect is multiplied by 10 and applied again to any upgrades that didn't get his boost.<br><i><b>They</b> might have made an enemy of him</i>`},
             fullDisplay() {return `<h3>`+this.title+`</h3><br>`+tmp[this.layer].upgrades[this.id].description+`<br><br>Requires: `+ this.cost+` Mysteries`},
             cost: format(new Decimal(1e9)),
             currencyDisplayName: `Mysteries`,
