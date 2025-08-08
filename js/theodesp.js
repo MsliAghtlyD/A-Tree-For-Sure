@@ -229,8 +229,8 @@ addLayer('t', {
         eff = player[this.layer].points.add(1).pow(0.375)
         if (hasChallenge('t', 11)) eff = eff.times(3.21)
         if (hasUpgrade('fr', 21)) eff = eff.times(5)
-
         if (inChallenge('t', 11)) eff = eff.pow(0)
+        softeff = softcap(eff, new Decimal(1e512), new Decimal(0.25))               
         return eff
         },
 
