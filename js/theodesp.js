@@ -569,7 +569,7 @@ addLayer('t', {
             challengeDescription: `test`,
             goalDescription:`test`,
             rewardDescription: function() {return `test`},            
-            canComplete: function() {return player.points.gte(1e40)&&hasUpgrade('c', 22)},
+            canComplete: function() {return false},
             unlocked() {return false},
             countsAs: [11, 12],
             onExit() {if(player.g.clickables[12]==1) {player.g.clickables[12]=0, startChallenge('m', 15)}},
