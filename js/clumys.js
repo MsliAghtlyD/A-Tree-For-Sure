@@ -136,8 +136,8 @@ addLayer(`c`, {
                 if(hasUpgrade('c',33)) softeff = softeff.times(upgradeEffect('c', 33))
                 return softeff}
                 weff = player.c.points.add(1).pow(0.1)
-                if(hasUpgrade('fr', 22)) weff=weff.times(upgradeEffect('fr', 22))
                 softweff = softcap(weff, new Decimal(1e256), new Decimal(0.25))
+                if(hasUpgrade('fr', 22)) softweff=softweff.times(upgradeEffect('fr', 22))
                 return softweff
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+`x` }, // Add formatting to the effect
