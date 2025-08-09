@@ -25,7 +25,7 @@ addLayer(`a`, {
         `blank`,
         `clickables`,
         [`display-text`,
-            function() {if(player.a.clicon==1 && player.a.clickables[12]==1) return `You chose the easy path, look for oddities and there shall be your prizes`},
+            function() {if(player.a.clicon==1) return `You chose the easy path, look for oddities and there shall be your prizes`},
             {"font-size": `32px`}],
         [`display-text`,
             function() {if(player.a.clicon!=1 && player.a.clickables[21]!=1) return `Hard mode needs you to have never used any other achievement clickable`},
@@ -35,10 +35,6 @@ addLayer(`a`, {
         [`display-text`,
             function(){return `Pressing shift while hovering above an achievement will display it's goal tooltip (if you completed the achievement)`}],
     ],
-    
-    sea : new Decimal (0),
-
-    seam : new Decimal (0),
 
     clicon : 0,
 
@@ -67,7 +63,7 @@ addLayer(`a`, {
 
     },
     12: {
-        title: `Enable help for the secrets?`,
+        title: `Enable help for the secrets and other parts of the game?`,
         display() {
             if(player.a.clickables[12]==1){return `Yes`}
             return `No`},
