@@ -423,6 +423,7 @@ addLayer(`m`, {
             tmp.m.repare = tmp.m.repare.add(1)},
             unlocked() {return(hasUpgrade('t', 32))},
             tooltip() {return`Next one will be on Theory layer`},
+            style() {const style = {}; if (player.a.clickables[12]==1 && !hasAchievement(`a`, 55)) style[`background-color`] = `#004400`; return style}
         },
         32:{
             title: `That looks a bit pricey`,
