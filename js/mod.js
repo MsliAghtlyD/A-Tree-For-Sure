@@ -162,6 +162,8 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Theory upgrades are now spliced correctly again<br>
 		- Added a cap to clue upgrades and theory layer effect to prevent infinite exponention<br>
 		- Fixed the whole secret achievements clue again<br>
+		- Fixed a bug where you could tame cookie but never get the related achievement<br>
+		- Added more precision on where the cured [thing] was<br>
 		- Corrected a few typso<br>
 		`
 	
