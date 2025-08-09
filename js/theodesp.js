@@ -534,7 +534,10 @@ addLayer('t', {
         },
     },
     
+    contbug : new Decimal(0),
+
     update(){
+        if(hasUpgrade('t', 52) && !hasAchievement('a', 53) && tmp.t.contbug==0){ tmp.t.contbug = tmp.t.contbug.add(1), setTimeout(() => {tmp.t.contbug = tmp.t.contbug.minus(1); if(hasUpgrade('t', 52)) player.t.upgrades.splice(player.t.upgrades.indexOf(52), 1)}, 6000)};
         if(hasUpgrade('t', 42) && !player.g.clickables[11]==1){
             if(tmp.t.buyables[11].canAfford) setBuyableAmount(`t`, 11, player.t.points.add(1).div(5).mul(buyableEffect('m', 21)).log(buyableEffect('t', 12).add(5)).floor().add(1))
         }
