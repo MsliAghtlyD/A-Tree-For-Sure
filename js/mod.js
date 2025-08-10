@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.04999a",
+	num: "0.04999b",
 	name: "A beginning",
 }
 
@@ -165,6 +165,8 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Fixed a bug where you could tame cookie but never get the related achievement<br>
 		- Added more precision on where the cured [thing] was<br>
 		- Corrected a few typso<br>
+	<h3>v0.04999b</h3><br>
+		- Corrected the whole secret achievement count again<br>
 		`
 	
 
@@ -242,10 +244,16 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
-	if(player.d.upgrades.includes(toNumber(44)) || player.d.upgrades.includes("44")) player.d.upgrades.splice(player.d.upgrades.indexOf('44'), 1), player.d.points = player.d.points.add(1)
-	if(player.a.achievements.includes(toNumber(19)) || player.a.achievements.includes("19")) player.a.achievements.splice(player.a.achievements.indexOf("19"), 1)
-	if(player.a.achievements.includes(toNumber(29)) || player.a.achievements.includes("29")) player.a.achievements.splice(player.a.achievements.indexOf("29"), 1)
-	if(player.a.achievements.includes(toNumber(39)) || player.a.achievements.includes("39")) player.a.achievements.splice(player.a.achievements.indexOf("39"), 1)
-	if(player.m.challenges[11]) player.m.challenges[11] = 0
-	if(player.t.challenges[11]) player.t.challenges[11] = 0
+	player.a.seam = new Decimal(0)
+	if(player.a.achievements.includes("16")) player.a.seam = player.a.seam.add(1)
+	if(player.a.achievements.includes("23")) player.a.seam = player.a.seam.add(1)
+	if(player.a.achievements.includes("25")) player.a.seam = player.a.seam.add(1)
+	if(player.a.achievements.includes("37")) player.a.seam = player.a.seam.add(1)
+	if(player.a.achievements.includes("53")) player.a.seam = player.a.seam.add(1)
+	player.a.sea = new Decimal(0)
+	if(player.a.achievements.includes("19")) player.a.sea = player.a.sea.add(1)
+	if(player.a.achievements.includes("29")) player.a.sea = player.a.sea.add(1)
+	if(player.a.achievements.includes("39")) player.a.sea = player.a.sea.add(1)
+	if(player.a.achievements.includes("41")) player.a.sea = player.a.sea.add(1)
+	if(player.a.achievements.includes("42")) player.a.sea = player.a.sea.add(1)
 }

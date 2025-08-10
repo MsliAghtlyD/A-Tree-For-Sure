@@ -161,7 +161,7 @@ addLayer(`a`, {
             done() {return (hasUpgrade('c', 25))},
 
             goalTooltip() {return`While in second mystery challenge buy the upgrade that unlocks it`},
-
+            onComplete(){player.a.seam = player.a.seam.add(1)},
             doneTooltip() {if (player.shiftin) return
                 return`Reward : Why would you get rewarded for that?`},
         },
@@ -215,7 +215,7 @@ addLayer(`a`, {
 				return (hasChallenge('d', 11))
 			},
             goalTooltip() {return`Finish the Despair Challenge`},
-
+            onComplete(){player.a.seam = player.a.seam.add(1)},
             doneTooltip() {if (player.shiftin) return
                 return`Reward : The promised new layer is finally unlocked`},
 
@@ -239,7 +239,7 @@ addLayer(`a`, {
 				return (hasUpgrade('t', 21))
 			},
             goalTooltip() {return`Buy fourth Theory upgrade`},
-
+            onComplete(){player.a.seam = player.a.seam.add(1)},
             doneTooltip() {if (player.shiftin) return
                 return`Funny story, you can't reset them... Would a theory challenge cheer you up?`},
 
@@ -363,7 +363,7 @@ addLayer(`a`, {
             name: `Like oil and water`,
             done() {return(hasUpgrade('t', 45))},
             goalTooltip() {return`Set your standards to the floor`},
-
+            onComplete(){player.a.seam = player.a.seam.add(1)},
             doneTooltip() {if (player.shiftin) return
                 return`Reward : My pity <br><i>Are you really that desperate?</i>`},
         },
@@ -397,7 +397,7 @@ addLayer(`a`, {
             goalTooltip() {return`Fidget with the mutually repulsive theory upgrades`},
             unlocked() {return (hasAchievement('a', 41))},
             doneTooltip() {if (player.shiftin) return
-                return`Can't blame you, it felt good playing with it <br><br> You get to keep both upgrades I guess then, but only the stronger effect`},
+                return`Can't blame you, it felt good playing with it <br><br> You get to keep both upgrades I guess then, but only the stronger effect will apply`},
             onComplete(){player.a.sea = player.a.sea.add(1)},
             style() {const style = {}; if (hasAchievement(this.layer,this.id)) style[`background-color`] = `#A75FBF`; return style}
         },
@@ -438,6 +438,7 @@ addLayer(`a`, {
                 return `Fail at restraining Cookie`},
             doneTooltip() {if (player.shiftin) return
                 return`Reward : I fixed the upgrade. At a cost.`},
+            onComplete(){player.a.seam = player.a.seam.add(1)},
 
         },
 

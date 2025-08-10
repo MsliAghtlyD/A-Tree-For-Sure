@@ -117,6 +117,27 @@ addLayer(`g`, {
                 player.g.points = player.g.points.minus(goal)},
             onEnter(){if(this.canComplete('g', 11)) completeChallenge('g')},
             onExit(){if (getBuyableAmount(this.layer, 11).gte(2)) setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).mul(0).add(1))
+                if(getBuyableAmount(this.layer, 11).equals(0)) { tmp.g.buyables[11].bought = false, tmp.g.upach = true
+                }
+            },
+            reseter : false
+            
+      },
+      
+      12: {
+            name: `They're all AIs I know it`,
+            completionLimit: 10,
+           // completionGoal: new Decimal(10).power(challengeCompletions('g', this.id).add(1)),
+            challengeDescription: `Get a taste of the same reality except more futurist, almost cyberpunkish`,
+            goalDescription: function(){ let goal = new Decimal(10).pow(Decimal.add(1, challengeCompletions('g', this.id)))
+                return `get `+format(goal)+` Global Conspiracies and then get the hell out`},
+            rewardDescription: function() {return `Mystery layer's <b>You're so cheap</b> base is raised to the power of ${challengeCompletions('g',11)+1}`},
+            canComplete: function() {return player.g.points.gte(new Decimal(10).pow(Decimal.add(1, challengeCompletions('g', this.id))))},
+            unlocked() {return(false)},
+            onComplete(){let goal = new Decimal(10).pow(challengeCompletions('g', this.id))
+                player.g.points = player.g.points.minus(goal)},
+            onEnter(){if(this.canComplete('g', 11)) completeChallenge('g')},
+            onExit(){if (getBuyableAmount(this.layer, 11).gte(2)) setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).mul(0).add(1))
                 if(getBuyableAmount(this.layer, 11).equals(0)) { tmp.g.buyables[11].bought = false, tmp.g.upach = true}
             },
             reseter : false
@@ -186,8 +207,27 @@ addLayer(`g`, {
             title: `Grab your tinfoil hats`,
             unlocked() { return hasAchievement('a', 54) },
             cost() { return new Decimal(format(2500)) },
-            display() {if(inChallenge('g', 11)) return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + getBuyableAmount(this.layer, this.id) + `<br>Effect: <i>THEY are everywhere.</i><br> This layer's effect now also affect clue gain.`
-                return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + hasBuyable(`g`, this.id) + `<br>Effect: <i>THEY are everywhere.</i><br> This layer's effect now also affect clue gain.`
+            display() {if(inChallenge('g', 11)) return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + getBuyableAmount(this.layer, this.id) + `<br>Effect: <i><b>THEY</b> are everywhere.</i><br> This layer's effect now also affect clue gain.`
+                return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + hasBuyable(`g`, this.id) + `<br>Effect: <i><b>THEY</b> are everywhere.</i><br> This layer's effect now also affect clue gain.`
+            },
+            canAfford() { if (inChallenge('g', 11) && tmp.g.buyables[this.id].bought) return true
+                return player[this.layer].points.gte(this.cost()) },
+            buy() {
+                if(!(inChallenge('g', 11) && tmp.g.buyables[this.id].bought))player[this.layer].points = player[this.layer].points.sub(this.cost())
+                if (getBuyableAmount(this.layer, this.id).equals(9)) setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).mul(0))
+                else setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1)), tmp.g.buyables[this.id].bought = true
+            },
+            purchaseLimit() {if (inChallenge('g', 11)) return new Decimal(10)
+                return new Decimal(1)},
+            bought : false
+        },
+
+        13: {
+            title: `First they'll do everything for us...`,
+            unlocked() { return false },
+            cost() { return new Decimal(format(50000)) },
+            display() {if(inChallenge('g', 11)) return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + getBuyableAmount(this.layer, this.id) + `<br>Effect: <i><b>THEY</b> will try to become irreplaceable.</i><br>Clue upgrades are now kept on theory reset, and the two other theory buyables are now also atomated.`
+                return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + hasBuyable(`g`, this.id) + `<br>Effect: <i><b>THEY</b> will try to become irreplaceable.</i><br>Clue upgrades are now kept on theory reset, and the two other theory buyables are now also atomated.`
             },
             canAfford() { if (inChallenge('g', 11) && tmp.g.buyables[this.id].bought) return true
                 return player[this.layer].points.gte(this.cost()) },

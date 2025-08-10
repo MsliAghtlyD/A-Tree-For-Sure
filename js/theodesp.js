@@ -144,7 +144,6 @@ addLayer(`d`, {
             cost: new Decimal(1),
             unlocked() {return(hasUpgrade('d', 43)) },
             style() {const style = {}; if (player.a.clickables[12]==1 && !hasAchievement(`a`, 29)) style[`background-color`] = `#004400`; return style},
-            onPurchase(){player.a.seam = player.a.seam.add(1)}
         },
     },
     challenges: {
@@ -384,7 +383,6 @@ addLayer('t', {
             onPurchase(){
                 if (hasAchievement('a', 41)) return
                 if(hasUpgrade(`t`, 25)) player.t.upgrades.splice(player.t.upgrades.indexOf(25), 1)
-                if(tmp.t.baf==0) player.a.seam = player.a.seam.add(1)
                 tmp.t.baf = tmp.t.baf.add(1)
             },
             style() {const style = {}; if (player.a.clickables[12]==1 && !hasAchievement(`a`, 41)&&hasUpgrade(`t`, 25)) style[`background-color`] = `#004400`; return style},
@@ -554,7 +552,6 @@ addLayer('t', {
             rewardDescription:`Theory layer's boost's formula is much more generous`,
             canComplete: function() {return player.c.points.gte(1e7)&&hasUpgrade('c', 22)},
             unlocked() {return(hasAchievement('a', 25)) },
-            onComplete(){player.a.seam = player.a.seam.add(1)},
             style() {const style = {}; if (player.a.clickables[12]==1 && !hasAchievement(`a`, 39)) style[`background-color`] = `#004400`; return style}
         },
         12: {

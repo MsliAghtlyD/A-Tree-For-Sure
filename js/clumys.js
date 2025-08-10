@@ -20,6 +20,7 @@ addLayer(`c`, {
             if (hasMilestone('m', 2) && resettingLayer==`m`) keep.push(`upgrades`)
             if (hasMilestone('fo', 6) && (resettingLayer=='fo'|| resettingLayer=='fr'))keep.push(`upgrades`)
             if (hasMilestone('fo', 6) && hasUpgrade('g', 13) && resettingLayer=='g')keep.push(`upgrades`)
+            if (hasBuyable('g', 13) && resettingLayer=='t')keep.push('upgrades')
             if (layers[resettingLayer].row > this.row) layerDataReset(`c`, keep)
         },
 
@@ -449,7 +450,6 @@ addLayer(`m`, {
             rewardDescription:`clue base gets boosted`,
             canComplete: function() {return player.points.gte(1e7)},
             unlocked() {if(hasAchievement('a', 13)) return true},
-            onComplete() {player.a.seam = player.a.seam.add(1)},
             style() {const style = {}; if (player.a.clickables[12]==1 && !hasAchievement(`a`, 19)) style[`background-color`] = `#004400`; return style}
         },
         12: {
