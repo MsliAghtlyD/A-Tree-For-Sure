@@ -120,7 +120,9 @@ addLayer(`g`, {
                 if(getBuyableAmount(this.layer, 11).equals(0)) { tmp.g.buyables[11].bought = false, tmp.g.upach = true
                 }
             },
-            reseter : false
+            reseter : false,
+            style() {const style = {}; if (player.a.clickables[12]==1 && !hasAchievement(`a`, 42)) style[`background-color`] = `#004400`; return style}
+
             
       },
       
