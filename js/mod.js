@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.04999b",
+	num: "0.04999c",
 	name: "A beginning",
 }
 
@@ -164,9 +164,11 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Fixed the whole secret achievements clue again<br>
 		- Fixed a bug where you could tame cookie but never get the related achievement<br>
 		- Added more precision on where the cured [thing] was<br>
-		- Corrected a few typso<br>
+		- Corrected a few typso<br><br>
 	<h3>v0.04999b</h3><br>
-		- Corrected the whole secret achievement count again<br>
+		- Corrected the whole secret achievement count again<br><br>
+	<h3>v0.04999c</h3><br>
+		- Fixed a bug where you could lose your cures and a buyable<br><br>
 		`
 	
 
@@ -256,4 +258,5 @@ function fixOldSave(oldVersion){
 	if(player.a.achievements.includes("39")) player.a.sea = player.a.sea.add(1)
 	if(player.a.achievements.includes("41")) player.a.sea = player.a.sea.add(1)
 	if(player.a.achievements.includes("42")) player.a.sea = player.a.sea.add(1)
+	if(getBuyableAmount(this.layer, 12).gte(2)) setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).mul(0).add(1))
 }
