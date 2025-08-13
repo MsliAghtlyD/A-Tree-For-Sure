@@ -123,6 +123,8 @@ addLayer(`g`, {
                 if(getBuyableAmount(this.layer, 11).equals(0)) { player.g.buyon = false, tmp.g.upach = true}
                 if(getBuyableAmount(this.layer, 12).gte(2)) setBuyableAmount(this.layer, 12, getBuyableAmount(this.layer, 12).mul(0).add(1))
                 if(getBuyableAmount(this.layer, 12).equals(0)) { player.g.buyto = false, tmp.g.upach = true}
+                if(getBuyableAmount(this.layer, 21).gte(2)) setBuyableAmount(this.layer, 21, getBuyableAmount(this.layer, 21).mul(0).add(1))
+                if(getBuyableAmount(this.layer, 21).equals(0)) { player.g.buytre = false, tmp.g.upach = true}
             },
             reseter : false,
             style() {const style = {}; if (player.a.clickables[12]==1 && !hasAchievement(`a`, 42)) style[`background-color`] = `#004400`; return style}
