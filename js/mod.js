@@ -258,5 +258,5 @@ function fixOldSave(oldVersion){
 	if(player.a.achievements.includes("39")) player.a.sea = player.a.sea.add(1)
 	if(player.a.achievements.includes("41")) player.a.sea = player.a.sea.add(1)
 	if(player.a.achievements.includes("42")) player.a.sea = player.a.sea.add(1)
-	if(new Decimal(getBuyableAmount(this.layer, 12)).gte(2)) setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).mul(0).add(1))
+	if(new Decimal(getBuyableAmount(this.layer, 12)).gte(2)) setBuyableAmount(this.layer, this.id, new Decimal(getBuyableAmount(this.layer, this.id)).mul(0).add(1))
 }
