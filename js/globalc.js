@@ -116,9 +116,9 @@ addLayer(`g`, {
             onComplete(){let goal = new Decimal(10).pow(challengeCompletions('g', this.id))
                 player.g.points = player.g.points.minus(goal)},
             onEnter(){if(this.canComplete('g', 11)) completeChallenge('g')},
-            onExit(){if (getBuyableAmount(this.layer, 11).gte(2)) setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).mul(0).add(1))
+            onExit(){if (getBuyableAmount(this.layer, 11).gte(2)) setBuyableAmount(this.layer, 11, getBuyableAmount(this.layer, 11).mul(0).add(1))
                 if(getBuyableAmount(this.layer, 11).equals(0)) { tmp.g.buyables[11].bought = false, tmp.g.upach = true}
-                if(getBuyableAmount(this.layer, 12).gte(2)) setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).mul(0).add(1))
+                if(getBuyableAmount(this.layer, 12).gte(2)) setBuyableAmount(this.layer, 11, getBuyableAmount(this.layer, 11).mul(0).add(1))
                 if(getBuyableAmount(this.layer, 12).equals(0)) { tmp.g.buyables[12].bought = false, tmp.g.upach = true}
             },
             reseter : false,
