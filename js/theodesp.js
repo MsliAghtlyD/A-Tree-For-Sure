@@ -489,7 +489,7 @@ addLayer('t', {
             },
             buy() {
                 let cost = new Decimal (1)
-                player[this.layer].points = player[this.layer].points.sub(this.cost().mul(cost))
+                if (!(hasBuyable(`g`, 21) && !player.g.clickables[11]==1)) player[this.layer].points = player[this.layer].points.sub(this.cost().mul(cost))
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
                 setBuyableAmount(this.layer, 11, getBuyableAmount(this.layer, 11).times(0))
             },
@@ -520,7 +520,7 @@ addLayer('t', {
             },
             buy() {
                 let cost = new Decimal (1)
-                player[this.layer].points = player[this.layer].points.sub(this.cost().mul(cost))
+                if (!(hasBuyable(`g`, 21) && !player.g.clickables[11]==1)) player[this.layer].points = player[this.layer].points.sub(this.cost().mul(cost))
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             effect(x) {
@@ -536,13 +536,20 @@ addLayer('t', {
 
     update(){
         if(hasUpgrade('t', 52) && !hasAchievement('a', 53) && tmp.t.contbug==0){ tmp.t.contbug = tmp.t.contbug.add(1), setTimeout(() => {tmp.t.contbug = tmp.t.contbug.minus(1); if(hasUpgrade('t', 52)) player.t.upgrades.splice(player.t.upgrades.indexOf(52), 1)}, 6000)};
-        if(hasUpgrade('t', 42) && !player.g.clickables[11]==1){
-            if(tmp.t.buyables[11].canAfford) setBuyableAmount(`t`, 11, player.t.points.add(1).div(5).mul(buyableEffect('m', 21)).log(buyableEffect('t', 12).add(5)).floor().add(1))
-        }
         
-
-
-
+        if(hasUpgrade('t', 42) && !player.g.clickables[11]==1){
+            if(tmp.t.buyables[11].canAfford) setBuyableAmount(`t`, 11, player.t.points.add(1).div(5).mul(buyableEffect('m', 21)).log(buyableEffect('t', 12).add(5)).floor().add(1))}
+        if(hasBuyable('g', 21) && !player.g.clickables[11]==1){
+            if(tmp.t.buyables[12].canAfford)  {buyAm = new Decimal(player.t.points.add(1))
+                buyAm = softcap(buyAm, new Decimal('1e300'), 0.5)
+                buyAm = buyAm.div(1e12).mul(buyableEffect('m', 21)).log(1e12).floor().add(1)
+                setBuyableAmount(`t`, 12, buyAm)
+                setBuyableAmount('t', 11, new Decimal(0))}}
+        if(hasBuyable('g', 21) && !player.g.clickables[11]==1){
+            if(tmp.t.buyables[21].canAfford)   {buyAm = new Decimal(player.t.points.add(1))
+                buyAm = softcap(buyAm, new Decimal('1e300'), 0.5)
+                buyAm = buyAm.div(1e25).mul(buyableEffect('m', 21)).log(1e25).floor().add(1)
+                setBuyableAmount(`t`, 21, buyAm)}}
     },
     challenges: {
         11: {

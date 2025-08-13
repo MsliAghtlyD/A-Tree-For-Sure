@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.04999c",
+	num: "0.04999d",
 	name: "A beginning",
 }
 
@@ -169,6 +169,9 @@ let changelog = `<h1>Changelog:</h1><br><br>
 		- Corrected the whole secret achievement count again<br><br>
 	<h3>v0.04999c</h3><br>
 		- Fixed a bug where you could lose your cures and a buyable<br><br>
+	<h3>v0.04999d</h3><br>
+		- Started working on the next upgrade, should be the last fix<br>
+		- Fixed a bug where you could lose your cures and a buyable (yes again)<br><br>
 		`
 	
 
@@ -258,5 +261,8 @@ function fixOldSave(oldVersion){
 	if(player.a.achievements.includes("39")) player.a.sea = player.a.sea.add(1)
 	if(player.a.achievements.includes("41")) player.a.sea = player.a.sea.add(1)
 	if(player.a.achievements.includes("42")) player.a.sea = player.a.sea.add(1)
-	if(new Decimal(getBuyableAmount(this.layer, 12)).gte(2)) setBuyableAmount(this.layer, this.id, new Decimal(getBuyableAmount(this.layer, this.id)).mul(0).add(1))
+	if(new Decimal(getBuyableAmount('g', 12)).gte(2)) setBuyableAmount('g', 12, new Decimal(getBuyableAmount('g', 12)).mul(0).add(1))
+	if(new Decimal(getBuyableAmount('g', 11)).gte(1)) player.g.buyon = true
+	if(new Decimal(getBuyableAmount('g', 12)).gte(1)) player.g.buyto = true
+	if(new Decimal(getBuyableAmount('g', 21)).gte(1)) player.g.buytre = true
 }

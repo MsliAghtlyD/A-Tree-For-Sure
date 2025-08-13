@@ -5,6 +5,9 @@ addLayer(`g`, {
         points: new Decimal(0),             // `points` is the internal name for the main resource of the layer.
         chalon: new Decimal(0),
         chalto: new Decimal(0),
+        buyon: false,
+        buyto: false,
+        buytre: false,
     }},
 
     color: `#EDD258`,                       // The color for this layer, which affects many elements.
@@ -117,9 +120,9 @@ addLayer(`g`, {
                 player.g.points = player.g.points.minus(goal)},
             onEnter(){if(this.canComplete('g', 11)) completeChallenge('g')},
             onExit(){if (getBuyableAmount(this.layer, 11).gte(2)) setBuyableAmount(this.layer, 11, getBuyableAmount(this.layer, 11).mul(0).add(1))
-                if(getBuyableAmount(this.layer, 11).equals(0)) { tmp.g.buyables[11].bought = false, tmp.g.upach = true}
+                if(getBuyableAmount(this.layer, 11).equals(0)) { player.g.buyon = false, tmp.g.upach = true}
                 if(getBuyableAmount(this.layer, 12).gte(2)) setBuyableAmount(this.layer, 12, getBuyableAmount(this.layer, 12).mul(0).add(1))
-                if(getBuyableAmount(this.layer, 12).equals(0)) { tmp.g.buyables[12].bought = false, tmp.g.upach = true}
+                if(getBuyableAmount(this.layer, 12).equals(0)) { player.g.buyto = false, tmp.g.upach = true}
             },
             reseter : false,
             style() {const style = {}; if (player.a.clickables[12]==1 && !hasAchievement(`a`, 42)) style[`background-color`] = `#004400`; return style}
@@ -194,16 +197,15 @@ addLayer(`g`, {
             display() {if(inChallenge('g', 11)) return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + getBuyableAmount(this.layer, this.id) + `<br>Effect: <i>A passive generation that goes beyond 100% is nonsense.</i><br> Hardcap all passive generation at 100% and anything that multiplies it past the hardcap gets squared and applied to gain`
                 return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + hasBuyable(`g`, 11) + `<br>Effect: <i>A passive generation that goes beyond 100% is nonsense.</i><br> Hardcap all passive generation at 100% and anything that multiplies it past the hardcap gets squared and applied to gain`
             },
-            canAfford() { if (inChallenge('g', 11) && tmp.g.buyables[this.id].bought) return true
+            canAfford() { if (inChallenge('g', 11) && player.g.buyon) return true
                 return player[this.layer].points.gte(this.cost()) },
             buy() {
-                if(!(inChallenge('g', 11) && tmp.g.buyables[this.id].bought))player[this.layer].points = player[this.layer].points.sub(this.cost())
+                if(!(inChallenge('g', 11) && player.g.buyon))player[this.layer].points = player[this.layer].points.sub(this.cost())
                 if (getBuyableAmount(this.layer, this.id).equals(9)) setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).mul(0))
-                else setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1)), tmp.g.buyables[this.id].bought = true
+                else setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1)), player.g.buyon = true
             },
             purchaseLimit() {if (inChallenge('g', 11)) return new Decimal(10)
                 return new Decimal(1)},
-            bought : false
         },
 
         12: {
@@ -213,35 +215,33 @@ addLayer(`g`, {
             display() {if(inChallenge('g', 11)) return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + getBuyableAmount(this.layer, this.id) + `<br>Effect: <i><b>THEY</b> are everywhere.</i><br> This layer's effect now also affect clue gain.`
                 return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + hasBuyable(`g`, this.id) + `<br>Effect: <i><b>THEY</b> are everywhere.</i><br> This layer's effect now also affect clue gain.`
             },
-            canAfford() { if (inChallenge('g', 11) && tmp.g.buyables[this.id].bought) return true
+            canAfford() { if (inChallenge('g', 11) && player.g.buyto) return true
                 return player[this.layer].points.gte(this.cost()) },
             buy() {
-                if(!(inChallenge('g', 11) && tmp.g.buyables[this.id].bought))player[this.layer].points = player[this.layer].points.sub(this.cost())
+                if(!(inChallenge('g', 11) && player.g.buyto))player[this.layer].points = player[this.layer].points.sub(this.cost())
                 if (getBuyableAmount(this.layer, this.id).equals(9)) setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).mul(0))
-                else setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1)), tmp.g.buyables[this.id].bought = true
+                else setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1)), player.g.buyto = true
             },
             purchaseLimit() {if (inChallenge('g', 11)) return new Decimal(10)
                 return new Decimal(1)},
-            bought : false
         },
 
-        13: {
+        21: {
             title: `First they'll do everything for us...`,
             unlocked() { return false },
             cost() { return new Decimal(format(50000)) },
             display() {if(inChallenge('g', 11)) return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + getBuyableAmount(this.layer, this.id) + `<br>Effect: <i><b>THEY</b> will try to become irreplaceable.</i><br>Clue upgrades are now kept on theory reset, and the two other theory buyables are now also atomated.`
                 return `Cost: ` + format(tmp[this.layer].buyables[this.id].cost) + ` Global conspiracies` + `<br>Bought: ` + hasBuyable(`g`, this.id) + `<br>Effect: <i><b>THEY</b> will try to become irreplaceable.</i><br>Clue upgrades are now kept on theory reset, and the two other theory buyables are now also atomated.`
             },
-            canAfford() { if (inChallenge('g', 11) && tmp.g.buyables[this.id].bought) return true
+            canAfford() { if (inChallenge('g', 11) && player.g.buytre) return true
                 return player[this.layer].points.gte(this.cost()) },
             buy() {
-                if(!(inChallenge('g', 11) && tmp.g.buyables[this.id].bought))player[this.layer].points = player[this.layer].points.sub(this.cost())
+                if(!(inChallenge('g', 11) && player.g.buytre))player[this.layer].points = player[this.layer].points.sub(this.cost())
                 if (getBuyableAmount(this.layer, this.id).equals(9)) setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).mul(0))
-                else setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1)), tmp.g.buyables[this.id].bought = true
+                else setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1)), player.g.buytre = true
             },
             purchaseLimit() {if (inChallenge('g', 11)) return new Decimal(10)
                 return new Decimal(1)},
-            bought : false
         },
     },
 

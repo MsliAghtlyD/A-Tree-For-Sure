@@ -20,7 +20,7 @@ addLayer(`c`, {
             if (hasMilestone('m', 2) && resettingLayer==`m`) keep.push(`upgrades`)
             if (hasMilestone('fo', 6) && (resettingLayer=='fo'|| resettingLayer=='fr'))keep.push(`upgrades`)
             if (hasMilestone('fo', 6) && hasUpgrade('g', 13) && resettingLayer=='g')keep.push(`upgrades`)
-            if (hasBuyable('g', 13) && resettingLayer=='t')keep.push('upgrades')
+            if (hasBuyable('g', 21) && resettingLayer=='t')keep.push('upgrades')
             if (layers[resettingLayer].row > this.row) layerDataReset(`c`, keep)
         },
 
